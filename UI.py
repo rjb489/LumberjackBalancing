@@ -21,6 +21,18 @@ def select_file():
         messagebox.showerror("Error", f"Failed to process the file: {e}")
 
 
+#Open and extracts policy information from an excel file
+def calculation_file():
+    """Open a file dialog to select an Excel file."""
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")]
+    )
+    if not file_path:
+        return  # User canceled file selection
+
+    #logic to extract policies from excel
+
+
 def process_excel(input_file):
     """Process the Excel file, apply calculations, and save output."""
     # Load the input workbook
@@ -66,9 +78,12 @@ def get_image_path(filename):
 # Tkinter GUI
 root = tk.Tk()
 root.title("Excel Processor")
+root.geometry("500x400")  
+root.configure(bg="yellow")
 
-frame = tk.Frame(root, padx=20, pady=20)
+frame = tk.Frame(root, padx=100, pady=100)
 frame.pack()
+frame.configure(bg="RoyalBlue")
 
 # Load and display the image
 try:
@@ -78,7 +93,7 @@ try:
 
     # Load the image and resize it
     image = Image.open(image_path)
-    image = image.resize((150, 150), Image.ANTIALIAS)
+    image = image.resize((125, 150), Image.ANTIALIAS)
     photo = ImageTk.PhotoImage(image)
 
     # Display the image in the GUI
@@ -88,14 +103,22 @@ try:
 except Exception as e:
     print(f"Error loading image: {e}")
 
-# Add UI elements
-label = tk.Label(frame, text="Select an Excel file to process:")
+label = tk.Label(frame,
+                 text="Select an Excel file to process:",
+                 fg="black", bg="white")
 label.pack(pady=10)
 
-browse_button = tk.Button(frame, text="Browse", command=select_file)
+# White buttons
+browse_button = tk.Button(frame, text="Browse", bg="white", fg="black",
+                          command=select_file)
 browse_button.pack()
 
-exit_button = tk.Button(frame, text="Exit", command=root.quit)
-exit_button.pack(pady=10)
+policy_button = tk.Button(frame, text="Policy Table", bg="white", fg="black",
+                          command=calculation_file)
+policy_button.pack(pady=10)
+
+exit_button = tk.Button(frame, text="Exit", bg="white", fg="black",
+                        command=root.quit)
+exit_button.pack()
 
 root.mainloop()
