@@ -5,6 +5,7 @@ import numpy as np
 courseData = pd.read_excel("Scot_Randomized.xlsx")
 
 # Definition of essential categories necessary for data calculation
+# Future version should include building for composite key
 essentialColumns = [
     'Course Category (CCAT)', 
     'Max Units', 
@@ -43,6 +44,7 @@ class Course:
       self.facilityRoom = str(data.get('Facility Room', '')).strip()
       self.load = None
 
+   # Future version should include building
    def getCompositeKey(self):
       return (self.startDate, self.startTime, self.facilityRoom)
    
@@ -126,14 +128,12 @@ class FacultyMember:
       return total
 
    def calculatePercentage(self):
+      # IMPORTANT: Must be used after calculateTotalLoad
+      # ttvalue expected percentage = 30% per semester = 60% AY
+      # ctvalue expected percentage = 40% per semester = 80% AY
       ttValue = (self.totalLoad / 30.0) * 100
       ctValue = (self.totalLoad / 40.0) * 100
       return ttValue, ctValue
-
-   def __repr__(self):
-      ttValue, ctValue = self.calculatePercentage()
-      return (f"<FacultyMember {self.name} (ID: {self.emplid}), Load: {self.totalLoad:.2f}%, "
-              f"TT: {ttValue:.2f}%, CT: {ctValue:.2f}%>")
 
 ################################################################################
 # MAIN PROCESSING PORTION OF ALGORITHM
@@ -157,8 +157,7 @@ for index, row in courseData.iterrows():
    # other roles are stored separately
    # some cases are not fully accounted for (labs only calculated for PI role for example)
 
-   # Check if faculty is PI, if not store in other staff dictionary and skip to
-   # next row
+   # Check if faculty is PI, if not store in other staff dictionary and skip to next row
    if role != "PI":
       emplid = str(row.get('Instructor Emplid', '')).strip()
       if emplid not in otherStaff:
@@ -190,11 +189,24 @@ for index, row in courseData.iterrows():
 
 # Adjust the load for Co-convened and Team-taught courses
 for compKey, courseList in compositeMap.items():
+   # check if current key has more than one course
+   # this means that either two faculty members have the same course assigned to them (team-taught)
+   # OR the course composite key is the same for two different courses (co-convened)
    if len(courseList) > 1:
+      # use number of courses in key to adjust load
+      # indicates the number of faculty members teaching 
+      # OR number of different courses with same composite key (should be 2 for undergrad and grad co-convened courses)
       count = len(courseList)
+
+      # iterate through courses in current key
       for emplid, courseObject in courseList:
+         # calculate original load of course then divide by count
          originalLoad = courseObject.calculateLoad()
          adjustedLoad = originalLoad / count
+
+         # set adjusted load for current course object
+         # Team-taught: adjusted load is divided by number of faculty members
+         # Co-convened: adjusted load is divided by courses (should be 2) to add up to one full course
          courseObject.load = adjustedLoad
 
 # Calculate the total load and percentage for each faculty member
@@ -215,3 +227,6 @@ for emplid, faculty in facultyDict.items():
    #print(f"  Total Workload Load: {faculty.totalLoad:.2f}%")
    #print(f"  TT Percentage (baseline 30%): {ttValue:.2f}%")
    #print(f"  CT Percentage (baseline 40%): {ctValue:.2f}%\n")
+
+   # TO DO: include building category in course object (for composite key)
+   # TO DO: adjustable calculation values importend from policy file
