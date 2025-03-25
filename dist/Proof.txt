@@ -1,0 +1,1235 @@
+Faculty: Johnson, Alex (ID: 7833418)
+  Total Workload Load: 16.09%
+  TT Percentage (baseline 30%): 53.65%
+  CT Percentage (baseline 40%): 40.24%
+
+Faculty: Miller, Taylor (ID: 8614498)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Johnson, Alex (ID: 9440299)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Smith, Alex (ID: 8224570)
+  Total Workload Load: 11.02%
+  TT Percentage (baseline 30%): 36.72%
+  CT Percentage (baseline 40%): 27.54%
+
+Faculty: Johnson, Dana (ID: 1844872)
+  Total Workload Load: 13.83%
+  TT Percentage (baseline 30%): 46.08%
+  CT Percentage (baseline 40%): 34.56%
+
+Faculty: Garcia, John (ID: 7361099)
+  Total Workload Load: 8.32%
+  TT Percentage (baseline 30%): 27.75%
+  CT Percentage (baseline 40%): 20.81%
+
+Faculty: Williams, Taylor (ID: 9207762)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Miller, Alex (ID: 9621241)
+  Total Workload Load: 18.18%
+  TT Percentage (baseline 30%): 60.59%
+  CT Percentage (baseline 40%): 45.44%
+
+Faculty: Smith, Dana (ID: 5910287)
+  Total Workload Load: 12.28%
+  TT Percentage (baseline 30%): 40.94%
+  CT Percentage (baseline 40%): 30.70%
+
+Faculty: Williams, Robin (ID: 5118929)
+  Total Workload Load: 1.11%
+  TT Percentage (baseline 30%): 3.70%
+  CT Percentage (baseline 40%): 2.78%
+
+Faculty: Miller, Alex (ID: 5775321)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Davis, Pat (ID: 3808033)
+  Total Workload Load: 5.90%
+  TT Percentage (baseline 30%): 19.68%
+  CT Percentage (baseline 40%): 14.76%
+
+Faculty: Brown, Jane (ID: 3777345)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Jones, John (ID: 9460417)
+  Total Workload Load: 7.08%
+  TT Percentage (baseline 30%): 23.60%
+  CT Percentage (baseline 40%): 17.70%
+
+Faculty: Jones, Sam (ID: 2499664)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Brown, Robin (ID: 6281325)
+  Total Workload Load: 34.99%
+  TT Percentage (baseline 30%): 116.65%
+  CT Percentage (baseline 40%): 87.49%
+
+Faculty: Davis, Chris (ID: 5422716)
+  Total Workload Load: 22.77%
+  TT Percentage (baseline 30%): 75.90%
+  CT Percentage (baseline 40%): 56.92%
+
+Faculty: Miller, Chris (ID: 9556463)
+  Total Workload Load: 1.97%
+  TT Percentage (baseline 30%): 6.55%
+  CT Percentage (baseline 40%): 4.92%
+
+Faculty: Garcia, Dana (ID: 4007207)
+  Total Workload Load: 42.56%
+  TT Percentage (baseline 30%): 141.87%
+  CT Percentage (baseline 40%): 106.40%
+
+Faculty: Garcia, John (ID: 7545307)
+  Total Workload Load: 22.06%
+  TT Percentage (baseline 30%): 73.52%
+  CT Percentage (baseline 40%): 55.14%
+
+Faculty: Garcia, Sam (ID: 4928840)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Johnson, Sam (ID: 1447230)
+  Total Workload Load: 8.66%
+  TT Percentage (baseline 30%): 28.88%
+  CT Percentage (baseline 40%): 21.66%
+
+Faculty: Doe, Robin (ID: 1449558)
+  Total Workload Load: 1.74%
+  TT Percentage (baseline 30%): 5.79%
+  CT Percentage (baseline 40%): 4.34%
+
+Faculty: Garcia, John (ID: 6490517)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Johnson, Pat (ID: 6681580)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Brown, John (ID: 8377905)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Williams, Dana (ID: 4431814)
+  Total Workload Load: 1.22%
+  TT Percentage (baseline 30%): 4.05%
+  CT Percentage (baseline 40%): 3.04%
+
+Faculty: Smith, Jane (ID: 1372585)
+  Total Workload Load: 1.29%
+  TT Percentage (baseline 30%): 4.30%
+  CT Percentage (baseline 40%): 3.23%
+
+Faculty: Smith, Taylor (ID: 4979327)
+  Total Workload Load: 1.74%
+  TT Percentage (baseline 30%): 5.79%
+  CT Percentage (baseline 40%): 4.34%
+
+Faculty: Martinez, Alex (ID: 1589896)
+  Total Workload Load: 1.81%
+  TT Percentage (baseline 30%): 6.04%
+  CT Percentage (baseline 40%): 4.53%
+
+Faculty: Johnson, Alex (ID: 6075142)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Jones, Robin (ID: 1897410)
+  Total Workload Load: 1.64%
+  TT Percentage (baseline 30%): 5.46%
+  CT Percentage (baseline 40%): 4.10%
+
+Faculty: Johnson, Dana (ID: 8978937)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Williams, Pat (ID: 5749318)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Davis, Dana (ID: 2636571)
+  Total Workload Load: 1.81%
+  TT Percentage (baseline 30%): 6.04%
+  CT Percentage (baseline 40%): 4.53%
+
+Faculty: Doe, Chris (ID: 3036509)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Smith, John (ID: 6189952)
+  Total Workload Load: 1.81%
+  TT Percentage (baseline 30%): 6.04%
+  CT Percentage (baseline 40%): 4.53%
+
+Faculty: Garcia, Sam (ID: 9755414)
+  Total Workload Load: 1.91%
+  TT Percentage (baseline 30%): 6.37%
+  CT Percentage (baseline 40%): 4.78%
+
+Faculty: Miller, Taylor (ID: 7617915)
+  Total Workload Load: 1.74%
+  TT Percentage (baseline 30%): 5.79%
+  CT Percentage (baseline 40%): 4.34%
+
+Faculty: Jones, John (ID: 9218822)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Miller, Alex (ID: 5964122)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Johnson, Dana (ID: 1722655)
+  Total Workload Load: 28.81%
+  TT Percentage (baseline 30%): 96.04%
+  CT Percentage (baseline 40%): 72.03%
+
+Faculty: Doe, Dana (ID: 3763344)
+  Total Workload Load: 0.15%
+  TT Percentage (baseline 30%): 0.51%
+  CT Percentage (baseline 40%): 0.39%
+
+Faculty: Williams, Alex (ID: 7445114)
+  Total Workload Load: 0.80%
+  TT Percentage (baseline 30%): 2.67%
+  CT Percentage (baseline 40%): 2.00%
+
+Faculty: Johnson, Robin (ID: 9366119)
+  Total Workload Load: 0.35%
+  TT Percentage (baseline 30%): 1.18%
+  CT Percentage (baseline 40%): 0.88%
+
+Faculty: Miller, Robin (ID: 9807887)
+  Total Workload Load: 0.29%
+  TT Percentage (baseline 30%): 0.98%
+  CT Percentage (baseline 40%): 0.73%
+
+Faculty: Doe, Sam (ID: 2378727)
+  Total Workload Load: 0.51%
+  TT Percentage (baseline 30%): 1.69%
+  CT Percentage (baseline 40%): 1.27%
+
+Faculty: Miller, Alex (ID: 7722790)
+  Total Workload Load: 0.29%
+  TT Percentage (baseline 30%): 0.98%
+  CT Percentage (baseline 40%): 0.73%
+
+Faculty: Garcia, Sam (ID: 1985695)
+  Total Workload Load: 25.02%
+  TT Percentage (baseline 30%): 83.40%
+  CT Percentage (baseline 40%): 62.55%
+
+Faculty: Johnson, Morgan (ID: 9257517)
+  Total Workload Load: 5.22%
+  TT Percentage (baseline 30%): 17.41%
+  CT Percentage (baseline 40%): 13.06%
+
+Faculty: Williams, Alex (ID: 2438419)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Martinez, Chris (ID: 6759731)
+  Total Workload Load: 13.74%
+  TT Percentage (baseline 30%): 45.80%
+  CT Percentage (baseline 40%): 34.35%
+
+Faculty: Miller, Taylor (ID: 8856515)
+  Total Workload Load: 0.41%
+  TT Percentage (baseline 30%): 1.35%
+  CT Percentage (baseline 40%): 1.01%
+
+Faculty: Martinez, Alex (ID: 9337963)
+  Total Workload Load: 6.37%
+  TT Percentage (baseline 30%): 21.24%
+  CT Percentage (baseline 40%): 15.93%
+
+Faculty: Brown, Robin (ID: 1510669)
+  Total Workload Load: 0.58%
+  TT Percentage (baseline 30%): 1.93%
+  CT Percentage (baseline 40%): 1.45%
+
+Faculty: Williams, John (ID: 6451417)
+  Total Workload Load: 0.41%
+  TT Percentage (baseline 30%): 1.35%
+  CT Percentage (baseline 40%): 1.01%
+
+Faculty: Davis, Chris (ID: 7717500)
+  Total Workload Load: 0.41%
+  TT Percentage (baseline 30%): 1.35%
+  CT Percentage (baseline 40%): 1.01%
+
+Faculty: Brown, John (ID: 9754108)
+  Total Workload Load: 0.41%
+  TT Percentage (baseline 30%): 1.35%
+  CT Percentage (baseline 40%): 1.01%
+
+Faculty: Jones, Pat (ID: 5867846)
+  Total Workload Load: 0.35%
+  TT Percentage (baseline 30%): 1.16%
+  CT Percentage (baseline 40%): 0.87%
+
+Faculty: Jones, Taylor (ID: 7705133)
+  Total Workload Load: 0.35%
+  TT Percentage (baseline 30%): 1.16%
+  CT Percentage (baseline 40%): 0.87%
+
+Faculty: Williams, Sam (ID: 6574889)
+  Total Workload Load: 6.93%
+  TT Percentage (baseline 30%): 23.09%
+  CT Percentage (baseline 40%): 17.32%
+
+Faculty: Miller, Jane (ID: 4280937)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Doe, Pat (ID: 5666645)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Brown, Robin (ID: 8971680)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Johnson, Jane (ID: 7098818)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Jones, Chris (ID: 7033765)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Miller, Chris (ID: 2880111)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Smith, Dana (ID: 7213775)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Jones, Taylor (ID: 8222968)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Garcia, Pat (ID: 2784992)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Martinez, Pat (ID: 6911104)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Brown, Chris (ID: 8616266)
+  Total Workload Load: 9.16%
+  TT Percentage (baseline 30%): 30.55%
+  CT Percentage (baseline 40%): 22.91%
+
+Faculty: Garcia, Morgan (ID: 6885446)
+  Total Workload Load: 17.55%
+  TT Percentage (baseline 30%): 58.50%
+  CT Percentage (baseline 40%): 43.87%
+
+Faculty: Smith, Morgan (ID: 4069056)
+  Total Workload Load: 1.22%
+  TT Percentage (baseline 30%): 4.05%
+  CT Percentage (baseline 40%): 3.04%
+
+Faculty: Martinez, Dana (ID: 8608019)
+  Total Workload Load: 1.39%
+  TT Percentage (baseline 30%): 4.63%
+  CT Percentage (baseline 40%): 3.47%
+
+Faculty: Brown, John (ID: 4815015)
+  Total Workload Load: 1.22%
+  TT Percentage (baseline 30%): 4.05%
+  CT Percentage (baseline 40%): 3.04%
+
+Faculty: Johnson, John (ID: 9578333)
+  Total Workload Load: 1.39%
+  TT Percentage (baseline 30%): 4.63%
+  CT Percentage (baseline 40%): 3.47%
+
+Faculty: Martinez, Morgan (ID: 2397048)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Brown, Robin (ID: 7658141)
+  Total Workload Load: 0.52%
+  TT Percentage (baseline 30%): 1.74%
+  CT Percentage (baseline 40%): 1.30%
+
+Faculty: Garcia, Dana (ID: 9040392)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Brown, Taylor (ID: 2322998)
+  Total Workload Load: 1.04%
+  TT Percentage (baseline 30%): 3.47%
+  CT Percentage (baseline 40%): 2.61%
+
+Faculty: Garcia, John (ID: 7759211)
+  Total Workload Load: 2.61%
+  TT Percentage (baseline 30%): 8.69%
+  CT Percentage (baseline 40%): 6.52%
+
+Faculty: Martinez, Dana (ID: 6507509)
+  Total Workload Load: 1.56%
+  TT Percentage (baseline 30%): 5.21%
+  CT Percentage (baseline 40%): 3.91%
+
+Faculty: Miller, Alex (ID: 5770935)
+  Total Workload Load: 2.61%
+  TT Percentage (baseline 30%): 8.69%
+  CT Percentage (baseline 40%): 6.52%
+
+Faculty: Brown, Morgan (ID: 8856266)
+  Total Workload Load: 2.08%
+  TT Percentage (baseline 30%): 6.95%
+  CT Percentage (baseline 40%): 5.21%
+
+Faculty: Brown, Morgan (ID: 2261855)
+  Total Workload Load: 8.34%
+  TT Percentage (baseline 30%): 27.80%
+  CT Percentage (baseline 40%): 20.85%
+
+Faculty: Smith, Jane (ID: 9695469)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Johnson, Pat (ID: 7551255)
+  Total Workload Load: 13.33%
+  TT Percentage (baseline 30%): 44.45%
+  CT Percentage (baseline 40%): 33.34%
+
+Faculty: Garcia, Chris (ID: 2315628)
+  Total Workload Load: 12.07%
+  TT Percentage (baseline 30%): 40.25%
+  CT Percentage (baseline 40%): 30.19%
+
+Faculty: Williams, Dana (ID: 7579046)
+  Total Workload Load: 35.82%
+  TT Percentage (baseline 30%): 119.40%
+  CT Percentage (baseline 40%): 89.55%
+
+Faculty: Doe, John (ID: 5152504)
+  Total Workload Load: 10.00%
+  TT Percentage (baseline 30%): 33.32%
+  CT Percentage (baseline 40%): 24.99%
+
+Faculty: Smith, Alex (ID: 4355028)
+  Total Workload Load: 20.42%
+  TT Percentage (baseline 30%): 68.08%
+  CT Percentage (baseline 40%): 51.06%
+
+Faculty: Garcia, Morgan (ID: 4824063)
+  Total Workload Load: 11.86%
+  TT Percentage (baseline 30%): 39.53%
+  CT Percentage (baseline 40%): 29.64%
+
+Faculty: Brown, Dana (ID: 5175997)
+  Total Workload Load: 0.67%
+  TT Percentage (baseline 30%): 2.22%
+  CT Percentage (baseline 40%): 1.67%
+
+Faculty: Johnson, Sam (ID: 7993444)
+  Total Workload Load: 7.45%
+  TT Percentage (baseline 30%): 24.82%
+  CT Percentage (baseline 40%): 18.62%
+
+Faculty: Miller, Morgan (ID: 2787501)
+  Total Workload Load: 13.32%
+  TT Percentage (baseline 30%): 44.40%
+  CT Percentage (baseline 40%): 33.30%
+
+Faculty: Doe, Morgan (ID: 5435663)
+  Total Workload Load: 2.00%
+  TT Percentage (baseline 30%): 6.66%
+  CT Percentage (baseline 40%): 5.00%
+
+Faculty: Garcia, Pat (ID: 7395266)
+  Total Workload Load: 13.32%
+  TT Percentage (baseline 30%): 44.40%
+  CT Percentage (baseline 40%): 33.30%
+
+Faculty: Williams, Jane (ID: 7754666)
+  Total Workload Load: 23.31%
+  TT Percentage (baseline 30%): 77.70%
+  CT Percentage (baseline 40%): 58.28%
+
+Faculty: Davis, Jane (ID: 3644257)
+  Total Workload Load: 29.97%
+  TT Percentage (baseline 30%): 99.90%
+  CT Percentage (baseline 40%): 74.92%
+
+Faculty: Garcia, Jane (ID: 3949412)
+  Total Workload Load: 0.67%
+  TT Percentage (baseline 30%): 2.22%
+  CT Percentage (baseline 40%): 1.67%
+
+Faculty: Brown, Jane (ID: 3291011)
+  Total Workload Load: 3.16%
+  TT Percentage (baseline 30%): 10.54%
+  CT Percentage (baseline 40%): 7.91%
+
+Faculty: Jones, Chris (ID: 5484662)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Johnson, Taylor (ID: 7290270)
+  Total Workload Load: 4.35%
+  TT Percentage (baseline 30%): 14.49%
+  CT Percentage (baseline 40%): 10.87%
+
+Faculty: Johnson, Dana (ID: 9202612)
+  Total Workload Load: 15.21%
+  TT Percentage (baseline 30%): 50.70%
+  CT Percentage (baseline 40%): 38.03%
+
+Faculty: Johnson, Sam (ID: 3868370)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Martinez, Dana (ID: 4228808)
+  Total Workload Load: 5.83%
+  TT Percentage (baseline 30%): 19.43%
+  CT Percentage (baseline 40%): 14.57%
+
+Faculty: Davis, Morgan (ID: 9794983)
+  Total Workload Load: 9.37%
+  TT Percentage (baseline 30%): 31.22%
+  CT Percentage (baseline 40%): 23.42%
+
+Faculty: Doe, Robin (ID: 7861227)
+  Total Workload Load: 14.43%
+  TT Percentage (baseline 30%): 48.10%
+  CT Percentage (baseline 40%): 36.08%
+
+Faculty: Johnson, Morgan (ID: 4530742)
+  Total Workload Load: 0.93%
+  TT Percentage (baseline 30%): 3.09%
+  CT Percentage (baseline 40%): 2.32%
+
+Faculty: Doe, Jane (ID: 1209438)
+  Total Workload Load: 11.25%
+  TT Percentage (baseline 30%): 37.50%
+  CT Percentage (baseline 40%): 28.12%
+
+Faculty: Miller, Taylor (ID: 6958479)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Johnson, Alex (ID: 9274737)
+  Total Workload Load: 2.04%
+  TT Percentage (baseline 30%): 6.78%
+  CT Percentage (baseline 40%): 5.09%
+
+Faculty: Smith, Pat (ID: 5163881)
+  Total Workload Load: 2.04%
+  TT Percentage (baseline 30%): 6.78%
+  CT Percentage (baseline 40%): 5.09%
+
+Faculty: Doe, Sam (ID: 3965978)
+  Total Workload Load: 7.50%
+  TT Percentage (baseline 30%): 25.00%
+  CT Percentage (baseline 40%): 18.75%
+
+Faculty: Williams, Alex (ID: 7233669)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Jones, Dana (ID: 7225374)
+  Total Workload Load: 1.11%
+  TT Percentage (baseline 30%): 3.70%
+  CT Percentage (baseline 40%): 2.78%
+
+Faculty: Davis, Pat (ID: 3481826)
+  Total Workload Load: 0.83%
+  TT Percentage (baseline 30%): 2.77%
+  CT Percentage (baseline 40%): 2.08%
+
+Faculty: Doe, Morgan (ID: 1183141)
+  Total Workload Load: 1.67%
+  TT Percentage (baseline 30%): 5.55%
+  CT Percentage (baseline 40%): 4.16%
+
+Faculty: Martinez, John (ID: 6183430)
+  Total Workload Load: 1.11%
+  TT Percentage (baseline 30%): 3.70%
+  CT Percentage (baseline 40%): 2.78%
+
+Faculty: Williams, Morgan (ID: 9969574)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Doe, Taylor (ID: 7102450)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Doe, Pat (ID: 8727593)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Martinez, Jane (ID: 9089564)
+  Total Workload Load: 1.67%
+  TT Percentage (baseline 30%): 5.55%
+  CT Percentage (baseline 40%): 4.16%
+
+Faculty: Garcia, Morgan (ID: 4392100)
+  Total Workload Load: 1.67%
+  TT Percentage (baseline 30%): 5.55%
+  CT Percentage (baseline 40%): 4.16%
+
+Faculty: Jones, Alex (ID: 5624449)
+  Total Workload Load: 12.00%
+  TT Percentage (baseline 30%): 39.99%
+  CT Percentage (baseline 40%): 29.99%
+
+Faculty: Davis, Robin (ID: 4642885)
+  Total Workload Load: 8.16%
+  TT Percentage (baseline 30%): 27.20%
+  CT Percentage (baseline 40%): 20.40%
+
+Faculty: Doe, Pat (ID: 3894657)
+  Total Workload Load: 2.62%
+  TT Percentage (baseline 30%): 8.72%
+  CT Percentage (baseline 40%): 6.54%
+
+Faculty: Smith, Morgan (ID: 5147932)
+  Total Workload Load: 19.74%
+  TT Percentage (baseline 30%): 65.80%
+  CT Percentage (baseline 40%): 49.35%
+
+Faculty: Miller, Taylor (ID: 7772058)
+  Total Workload Load: 21.02%
+  TT Percentage (baseline 30%): 70.05%
+  CT Percentage (baseline 40%): 52.54%
+
+Faculty: Williams, Chris (ID: 2145819)
+  Total Workload Load: 20.27%
+  TT Percentage (baseline 30%): 67.57%
+  CT Percentage (baseline 40%): 50.68%
+
+Faculty: Brown, Chris (ID: 6891408)
+  Total Workload Load: 18.84%
+  TT Percentage (baseline 30%): 62.81%
+  CT Percentage (baseline 40%): 47.11%
+
+Faculty: Doe, Alex (ID: 4191549)
+  Total Workload Load: 10.28%
+  TT Percentage (baseline 30%): 34.27%
+  CT Percentage (baseline 40%): 25.70%
+
+Faculty: Jones, Jane (ID: 9197173)
+  Total Workload Load: 11.76%
+  TT Percentage (baseline 30%): 39.20%
+  CT Percentage (baseline 40%): 29.40%
+
+Faculty: Jones, Morgan (ID: 7198988)
+  Total Workload Load: 15.55%
+  TT Percentage (baseline 30%): 51.83%
+  CT Percentage (baseline 40%): 38.88%
+
+Faculty: Smith, Dana (ID: 4772200)
+  Total Workload Load: 15.98%
+  TT Percentage (baseline 30%): 53.26%
+  CT Percentage (baseline 40%): 39.94%
+
+Faculty: Martinez, Alex (ID: 1180208)
+  Total Workload Load: 23.12%
+  TT Percentage (baseline 30%): 77.05%
+  CT Percentage (baseline 40%): 57.79%
+
+Faculty: Johnson, John (ID: 3001602)
+  Total Workload Load: 5.07%
+  TT Percentage (baseline 30%): 16.91%
+  CT Percentage (baseline 40%): 12.68%
+
+Faculty: Smith, Chris (ID: 6602278)
+  Total Workload Load: 10.77%
+  TT Percentage (baseline 30%): 35.91%
+  CT Percentage (baseline 40%): 26.94%
+
+Faculty: Martinez, Jane (ID: 4470394)
+  Total Workload Load: 26.03%
+  TT Percentage (baseline 30%): 86.77%
+  CT Percentage (baseline 40%): 65.08%
+
+Faculty: Miller, Sam (ID: 4801089)
+  Total Workload Load: 9.20%
+  TT Percentage (baseline 30%): 30.65%
+  CT Percentage (baseline 40%): 22.99%
+
+Faculty: Garcia, John (ID: 2804428)
+  Total Workload Load: 15.54%
+  TT Percentage (baseline 30%): 51.81%
+  CT Percentage (baseline 40%): 38.86%
+
+Faculty: Brown, Taylor (ID: 6041028)
+  Total Workload Load: 4.86%
+  TT Percentage (baseline 30%): 16.20%
+  CT Percentage (baseline 40%): 12.15%
+
+Faculty: Doe, Chris (ID: 8806160)
+  Total Workload Load: 1.11%
+  TT Percentage (baseline 30%): 3.70%
+  CT Percentage (baseline 40%): 2.78%
+
+Faculty: Smith, Chris (ID: 3360995)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Doe, Dana (ID: 7570291)
+  Total Workload Load: 0.56%
+  TT Percentage (baseline 30%): 1.85%
+  CT Percentage (baseline 40%): 1.39%
+
+Faculty: Smith, Jane (ID: 9064177)
+  Total Workload Load: 2.84%
+  TT Percentage (baseline 30%): 9.48%
+  CT Percentage (baseline 40%): 7.11%
+
+Faculty: Doe, Taylor (ID: 1609961)
+  Total Workload Load: 2.50%
+  TT Percentage (baseline 30%): 8.33%
+  CT Percentage (baseline 40%): 6.24%
+
+Faculty: Jones, Robin (ID: 9620583)
+  Total Workload Load: 18.43%
+  TT Percentage (baseline 30%): 61.43%
+  CT Percentage (baseline 40%): 46.08%
+
+Faculty: Miller, Taylor (ID: 9114685)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Doe, Alex (ID: 9896480)
+  Total Workload Load: 1.67%
+  TT Percentage (baseline 30%): 5.55%
+  CT Percentage (baseline 40%): 4.16%
+
+Faculty: Smith, Taylor (ID: 2205145)
+  Total Workload Load: 16.10%
+  TT Percentage (baseline 30%): 53.67%
+  CT Percentage (baseline 40%): 40.25%
+
+Faculty: Smith, Chris (ID: 1426647)
+  Total Workload Load: 8.32%
+  TT Percentage (baseline 30%): 27.75%
+  CT Percentage (baseline 40%): 20.81%
+
+Faculty: Davis, Jane (ID: 7841958)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Garcia, Taylor (ID: 3644383)
+  Total Workload Load: 4.16%
+  TT Percentage (baseline 30%): 13.87%
+  CT Percentage (baseline 40%): 10.41%
+
+Faculty: Garcia, Robin (ID: 5507323)
+  Total Workload Load: 25.45%
+  TT Percentage (baseline 30%): 84.84%
+  CT Percentage (baseline 40%): 63.63%
+
+Faculty: Johnson, Robin (ID: 8423722)
+  Total Workload Load: 10.78%
+  TT Percentage (baseline 30%): 35.93%
+  CT Percentage (baseline 40%): 26.95%
+
+Faculty: Garcia, Pat (ID: 4949231)
+  Total Workload Load: 2.78%
+  TT Percentage (baseline 30%): 9.27%
+  CT Percentage (baseline 40%): 6.95%
+
+Faculty: Martinez, Pat (ID: 6964145)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Smith, Sam (ID: 6744567)
+  Total Workload Load: 9.59%
+  TT Percentage (baseline 30%): 31.95%
+  CT Percentage (baseline 40%): 23.96%
+
+Faculty: Johnson, Alex (ID: 3289105)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Martinez, Alex (ID: 1317370)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Smith, Alex (ID: 9230037)
+  Total Workload Load: 14.98%
+  TT Percentage (baseline 30%): 49.95%
+  CT Percentage (baseline 40%): 37.46%
+
+Faculty: Williams, Pat (ID: 9988902)
+  Total Workload Load: 15.41%
+  TT Percentage (baseline 30%): 51.35%
+  CT Percentage (baseline 40%): 38.51%
+
+Faculty: Jones, Chris (ID: 1027547)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Doe, John (ID: 7938076)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Davis, Taylor (ID: 4909591)
+  Total Workload Load: 20.82%
+  TT Percentage (baseline 30%): 69.40%
+  CT Percentage (baseline 40%): 52.05%
+
+Faculty: Martinez, Dana (ID: 4060451)
+  Total Workload Load: 5.73%
+  TT Percentage (baseline 30%): 19.11%
+  CT Percentage (baseline 40%): 14.33%
+
+Faculty: Jones, Sam (ID: 4582124)
+  Total Workload Load: 17.76%
+  TT Percentage (baseline 30%): 59.20%
+  CT Percentage (baseline 40%): 44.40%
+
+Faculty: Miller, Pat (ID: 6661624)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Davis, Robin (ID: 8004460)
+  Total Workload Load: 11.42%
+  TT Percentage (baseline 30%): 38.06%
+  CT Percentage (baseline 40%): 28.54%
+
+Faculty: Davis, Robin (ID: 8479870)
+  Total Workload Load: 4.44%
+  TT Percentage (baseline 30%): 14.80%
+  CT Percentage (baseline 40%): 11.10%
+
+Faculty: Martinez, John (ID: 6392121)
+  Total Workload Load: 4.44%
+  TT Percentage (baseline 30%): 14.80%
+  CT Percentage (baseline 40%): 11.10%
+
+Faculty: Doe, Pat (ID: 5841818)
+  Total Workload Load: 5.42%
+  TT Percentage (baseline 30%): 18.05%
+  CT Percentage (baseline 40%): 13.54%
+
+Faculty: Brown, Jane (ID: 5065855)
+  Total Workload Load: 2.08%
+  TT Percentage (baseline 30%): 6.95%
+  CT Percentage (baseline 40%): 5.21%
+
+Faculty: Williams, Morgan (ID: 9559330)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Garcia, Chris (ID: 4098037)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Brown, Pat (ID: 5352649)
+  Total Workload Load: 9.57%
+  TT Percentage (baseline 30%): 31.91%
+  CT Percentage (baseline 40%): 23.93%
+
+Faculty: Smith, Robin (ID: 5678446)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Garcia, Robin (ID: 7659974)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Williams, Chris (ID: 4612459)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Doe, Robin (ID: 6631289)
+  Total Workload Load: 19.88%
+  TT Percentage (baseline 30%): 66.28%
+  CT Percentage (baseline 40%): 49.71%
+
+Faculty: Garcia, Taylor (ID: 9625356)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Garcia, Chris (ID: 2913017)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Doe, Sam (ID: 8549250)
+  Total Workload Load: 0.30%
+  TT Percentage (baseline 30%): 1.01%
+  CT Percentage (baseline 40%): 0.76%
+
+Faculty: Brown, Taylor (ID: 9614780)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Jones, Alex (ID: 4718521)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Davis, Chris (ID: 4815441)
+  Total Workload Load: 6.80%
+  TT Percentage (baseline 30%): 22.68%
+  CT Percentage (baseline 40%): 17.01%
+
+Faculty: Smith, Morgan (ID: 7773621)
+  Total Workload Load: 20.95%
+  TT Percentage (baseline 30%): 69.83%
+  CT Percentage (baseline 40%): 52.37%
+
+Faculty: Williams, Jane (ID: 9801543)
+  Total Workload Load: 6.38%
+  TT Percentage (baseline 30%): 21.28%
+  CT Percentage (baseline 40%): 15.96%
+
+Faculty: Jones, Pat (ID: 1033302)
+  Total Workload Load: 8.12%
+  TT Percentage (baseline 30%): 27.07%
+  CT Percentage (baseline 40%): 20.31%
+
+Faculty: Williams, Sam (ID: 6405236)
+  Total Workload Load: 8.75%
+  TT Percentage (baseline 30%): 29.15%
+  CT Percentage (baseline 40%): 21.86%
+
+Faculty: Doe, Robin (ID: 4232355)
+  Total Workload Load: 4.17%
+  TT Percentage (baseline 30%): 13.90%
+  CT Percentage (baseline 40%): 10.42%
+
+Faculty: Davis, John (ID: 4642962)
+  Total Workload Load: 2.08%
+  TT Percentage (baseline 30%): 6.95%
+  CT Percentage (baseline 40%): 5.21%
+
+Faculty: Miller, Alex (ID: 5147372)
+  Total Workload Load: 11.66%
+  TT Percentage (baseline 30%): 38.85%
+  CT Percentage (baseline 40%): 29.14%
+
+Faculty: Jones, Taylor (ID: 9709293)
+  Total Workload Load: 28.40%
+  TT Percentage (baseline 30%): 94.67%
+  CT Percentage (baseline 40%): 71.00%
+
+Faculty: Johnson, Pat (ID: 9623303)
+  Total Workload Load: 23.90%
+  TT Percentage (baseline 30%): 79.68%
+  CT Percentage (baseline 40%): 59.76%
+
+Faculty: Garcia, Alex (ID: 3829332)
+  Total Workload Load: 7.49%
+  TT Percentage (baseline 30%): 24.98%
+  CT Percentage (baseline 40%): 18.73%
+
+Faculty: Smith, Chris (ID: 3877494)
+  Total Workload Load: 9.16%
+  TT Percentage (baseline 30%): 30.53%
+  CT Percentage (baseline 40%): 22.89%
+
+Faculty: Johnson, Jane (ID: 1627253)
+  Total Workload Load: 19.31%
+  TT Percentage (baseline 30%): 64.38%
+  CT Percentage (baseline 40%): 48.28%
+
+Faculty: Davis, Dana (ID: 6950625)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Jones, Dana (ID: 4914107)
+  Total Workload Load: 16.65%
+  TT Percentage (baseline 30%): 55.50%
+  CT Percentage (baseline 40%): 41.62%
+
+Faculty: Smith, Alex (ID: 2749089)
+  Total Workload Load: 11.66%
+  TT Percentage (baseline 30%): 38.85%
+  CT Percentage (baseline 40%): 29.14%
+
+Faculty: Martinez, Jane (ID: 7570383)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Martinez, John (ID: 8323347)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Miller, Pat (ID: 1077754)
+  Total Workload Load: 23.31%
+  TT Percentage (baseline 30%): 77.70%
+  CT Percentage (baseline 40%): 58.28%
+
+Faculty: Miller, Pat (ID: 4791341)
+  Total Workload Load: 23.31%
+  TT Percentage (baseline 30%): 77.70%
+  CT Percentage (baseline 40%): 58.28%
+
+Faculty: Doe, Jane (ID: 6260751)
+  Total Workload Load: 23.31%
+  TT Percentage (baseline 30%): 77.70%
+  CT Percentage (baseline 40%): 58.28%
+
+Faculty: Miller, John (ID: 6084709)
+  Total Workload Load: 6.66%
+  TT Percentage (baseline 30%): 22.20%
+  CT Percentage (baseline 40%): 16.65%
+
+Faculty: Miller, Jane (ID: 6213804)
+  Total Workload Load: 33.30%
+  TT Percentage (baseline 30%): 111.00%
+  CT Percentage (baseline 40%): 83.25%
+
+Faculty: Miller, Alex (ID: 3285551)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Smith, Dana (ID: 8246986)
+  Total Workload Load: 17.76%
+  TT Percentage (baseline 30%): 59.20%
+  CT Percentage (baseline 40%): 44.40%
+
+Faculty: Johnson, Pat (ID: 1055718)
+  Total Workload Load: 16.65%
+  TT Percentage (baseline 30%): 55.50%
+  CT Percentage (baseline 40%): 41.63%
+
+Faculty: Williams, Robin (ID: 9673944)
+  Total Workload Load: 21.09%
+  TT Percentage (baseline 30%): 70.30%
+  CT Percentage (baseline 40%): 52.73%
+
+Faculty: Williams, Robin (ID: 2987738)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Smith, Pat (ID: 8695111)
+  Total Workload Load: 16.65%
+  TT Percentage (baseline 30%): 55.50%
+  CT Percentage (baseline 40%): 41.63%
+
+Faculty: Miller, John (ID: 7856554)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Smith, Sam (ID: 3679980)
+  Total Workload Load: 14.98%
+  TT Percentage (baseline 30%): 49.95%
+  CT Percentage (baseline 40%): 37.46%
+
+Faculty: Jones, Sam (ID: 1669419)
+  Total Workload Load: 29.97%
+  TT Percentage (baseline 30%): 99.90%
+  CT Percentage (baseline 40%): 74.92%
+
+Faculty: Jones, Sam (ID: 1678187)
+  Total Workload Load: 19.98%
+  TT Percentage (baseline 30%): 66.60%
+  CT Percentage (baseline 40%): 49.95%
+
+Faculty: Smith, John (ID: 2914720)
+  Total Workload Load: 18.31%
+  TT Percentage (baseline 30%): 61.05%
+  CT Percentage (baseline 40%): 45.79%
+
+Faculty: Doe, Morgan (ID: 3474470)
+  Total Workload Load: 33.30%
+  TT Percentage (baseline 30%): 111.00%
+  CT Percentage (baseline 40%): 83.25%
+
+Faculty: Johnson, Taylor (ID: 8373352)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Miller, Robin (ID: 1164359)
+  Total Workload Load: 14.98%
+  TT Percentage (baseline 30%): 49.95%
+  CT Percentage (baseline 40%): 37.46%
+
+Faculty: Jones, Pat (ID: 4418395)
+  Total Workload Load: 29.97%
+  TT Percentage (baseline 30%): 99.90%
+  CT Percentage (baseline 40%): 74.92%
+
+Faculty: Garcia, Jane (ID: 7190651)
+  Total Workload Load: 14.98%
+  TT Percentage (baseline 30%): 49.95%
+  CT Percentage (baseline 40%): 37.46%
+
+Faculty: Brown, Dana (ID: 2242474)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.97%
+
+Faculty: Miller, Pat (ID: 7464925)
+  Total Workload Load: 3.33%
+  TT Percentage (baseline 30%): 11.10%
+  CT Percentage (baseline 40%): 8.33%
+
+Faculty: Brown, Robin (ID: 3739638)
+  Total Workload Load: 4.16%
+  TT Percentage (baseline 30%): 13.85%
+  CT Percentage (baseline 40%): 10.39%
+
+Faculty: Williams, John (ID: 3112961)
+  Total Workload Load: 7.46%
+  TT Percentage (baseline 30%): 24.88%
+  CT Percentage (baseline 40%): 18.66%
+
+Faculty: Johnson, Chris (ID: 1974794)
+  Total Workload Load: 8.61%
+  TT Percentage (baseline 30%): 28.70%
+  CT Percentage (baseline 40%): 21.52%
+
+Faculty: Brown, Alex (ID: 1686781)
+  Total Workload Load: 12.52%
+  TT Percentage (baseline 30%): 41.73%
+  CT Percentage (baseline 40%): 31.30%
+
+Faculty: Johnson, Sam (ID: 1258204)
+  Total Workload Load: 13.32%
+  TT Percentage (baseline 30%): 44.40%
+  CT Percentage (baseline 40%): 33.30%
+
+Faculty: Williams, John (ID: 2290584)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Jones, Dana (ID: 7360815)
+  Total Workload Load: 14.98%
+  TT Percentage (baseline 30%): 49.95%
+  CT Percentage (baseline 40%): 37.46%
+
+Faculty: Doe, Robin (ID: 5037871)
+  Total Workload Load: 18.31%
+  TT Percentage (baseline 30%): 61.05%
+  CT Percentage (baseline 40%): 45.79%
+
+Faculty: Johnson, Chris (ID: 7412729)
+  Total Workload Load: 8.32%
+  TT Percentage (baseline 30%): 27.75%
+  CT Percentage (baseline 40%): 20.81%
+
+Faculty: Brown, John (ID: 9069324)
+  Total Workload Load: 34.97%
+  TT Percentage (baseline 30%): 116.55%
+  CT Percentage (baseline 40%): 87.41%
+
+Faculty: Doe, Dana (ID: 8558634)
+  Total Workload Load: 5.00%
+  TT Percentage (baseline 30%): 16.65%
+  CT Percentage (baseline 40%): 12.49%
+
+Faculty: Doe, Jane (ID: 6174894)
+  Total Workload Load: 21.64%
+  TT Percentage (baseline 30%): 72.15%
+  CT Percentage (baseline 40%): 54.11%
+
+Faculty: Johnson, Morgan (ID: 7135107)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Martinez, Jane (ID: 6402016)
+  Total Workload Load: 9.99%
+  TT Percentage (baseline 30%): 33.30%
+  CT Percentage (baseline 40%): 24.98%
+
+Faculty: Martinez, Dana (ID: 9889661)
+  Total Workload Load: 7.49%
+  TT Percentage (baseline 30%): 24.98%
+  CT Percentage (baseline 40%): 18.73%
+
+Faculty: Doe, Pat (ID: 7545956)
+  Total Workload Load: 7.49%
+  TT Percentage (baseline 30%): 24.98%
+  CT Percentage (baseline 40%): 18.73%
+
+Faculty: Williams, Pat (ID: 3622378)
+  Total Workload Load: 24.98%
+  TT Percentage (baseline 30%): 83.25%
+  CT Percentage (baseline 40%): 62.44%
+
+Faculty: Doe, Taylor (ID: 4396773)
+  Total Workload Load: 16.65%
+  TT Percentage (baseline 30%): 55.50%
+  CT Percentage (baseline 40%): 41.62%
+
+Faculty: Johnson, Sam (ID: 1677558)
+  Total Workload Load: 29.97%
+  TT Percentage (baseline 30%): 99.90%
+  CT Percentage (baseline 40%): 74.92%
+
