@@ -16,16 +16,40 @@ def loadWorkloadPolicy(filePath: str = None) -> dict:
       'highRate': 5.0
    }
 
+   policy = defaultPolicy.copy()
+
    if filePath:
       try:
          df = pd.read_excel(filePath)
          policyDict = {k: float(v) if isinstance(v, (int, float, str)) and v not in [None, ''] else v 
                           for k, v in dict(zip(df.iloc[:, 0], df.iloc[:, 1])).items()}
-         return policyDict
+         
+         if('lectureThreshold_low' in policyDict and
+            'lectureThreshold_mid' in policyDict and
+            'lectureThreshold_high' in policyDict):
+            policyDict['lectureThreshold'] = {
+               'low': float(policyDict.pop('lectureThreshold_low')),
+               'mid': float(policyDict.pop('lectureThreshold_mid')),
+               'high': float(policyDict.pop('lectureThreshold_high'))
+            }
+
+         for key, value in policyDict.items():
+            if isinstance(value, dict):
+               policy[key] = value
+            
+            else:
+               try:
+                  policy[key] = float(value)
+               
+               except (ValueError, TypeError):
+                  policy[key] = value
+         
+         return policy
+      
       except Exception as e:
          print("Error loading policy file, using default policy values:", e)
    
-   return defaultPolicy
+   return policy
 
 def loadInstructorTrack(filePath: str) -> dict:
    try:
