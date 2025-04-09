@@ -1,343 +1,279 @@
+
 import pandas as pd
-import numpy as np
+from collections import defaultdict
+from typing import Iterable, Dict, List, Tuple, Set
 
-def loadWorkloadPolicy(filePath: str = None) -> dict:
-   defaultPolicy = {
-      'independentStudyRate': 0.33,
-      'laboratoryRate': 4.17,
-      'lectureRate': 3.33,
-      'maxLoadCap': 5.0,
-      'lectureThreshold': {
-         'low': 90,
-         'mid': 150,
-         'high': 200,
-      },
-      'midRate': 4.17,
-      'highRate': 5.0
-   }
+###############################################################################
+# Updated workload algorithm (2025‑04‑08)
+###############################################################################
+# Handles all student‑related activities that can be inferred from the Peoplesoft
+# schedule export while restricting rows to Primary Instructors (PI).
+###############################################################################
 
-   policy = defaultPolicy.copy()
+# ---------------------------------------------------------------------------
+# Helper utilities
+# ---------------------------------------------------------------------------
+def _norm(s):
+    """Normalise strings for case‑insensitive comparison and handle NaN."""
+    return str(s).strip().lower() if pd.notna(s) else ""
 
-   if filePath:
-      try:
-         df = pd.read_excel(filePath)
-         policyDict = {k: float(v) if isinstance(v, (int, float, str)) and v not in [None, ''] else v 
-                          for k, v in dict(zip(df.iloc[:, 0], df.iloc[:, 1])).items()}
-         
-         if('lectureThreshold_low' in policyDict and
-            'lectureThreshold_mid' in policyDict and
-            'lectureThreshold_high' in policyDict):
-            policyDict['lectureThreshold'] = {
-               'low': float(policyDict.pop('lectureThreshold_low')),
-               'mid': float(policyDict.pop('lectureThreshold_mid')),
-               'high': float(policyDict.pop('lectureThreshold_high'))
-            }
+def _meeting_signature(row_or_course) -> Tuple:
+    """Return (date, time, building, room) tuple identifying a meeting."""
+    data = row_or_course.rawData if hasattr(row_or_course, "rawData") else row_or_course
+    return (
+        data.get("Start Date"),
+        data.get("Start Time"),
+        _norm(data.get("Facility Building")),
+        _norm(data.get("Facility Room")),
+    )
 
-         for key, value in policyDict.items():
-            if isinstance(value, dict):
-               policy[key] = value
-            
-            else:
-               try:
-                  policy[key] = float(value)
-               
-               except (ValueError, TypeError):
-                  policy[key] = value
-         
-         return policy
-      
-      except Exception as e:
-         print("Error loading policy file, using default policy values:", e)
-   
-   return policy
+# ---------------------------------------------------------------------------
+# Policy / supporting‑data loaders
+# ---------------------------------------------------------------------------
+def loadWorkloadPolicy(path: str | None = None) -> dict:
+    """Load workload policy spreadsheet or fall back to defaults."""
+    defaults = {
+        "independentStudyRate": 0.33,
+        "laboratoryRate": 4.17,
+        "lectureRate": 3.33,
+        "thesisRate": 3.33,
+        "maxLoadCap": 5.0,
+        "lectureThreshold": {"low": 90, "mid": 150, "high": 200},
+        "midRate": 4.17,
+        "highRate": 5.0,
+    }
+    policy = defaults.copy()
+    if path:
+        try:
+            df = pd.read_excel(path)
+            kv = {str(k).strip(): v for k, v in zip(df.iloc[:, 0], df.iloc[:, 1])}
+            # flatten lectureThreshold_* keys
+            if all(k in kv for k in ("lectureThreshold_low", "lectureThreshold_mid", "lectureThreshold_high")):
+                policy["lectureThreshold"] = {
+                    "low": float(kv.pop("lectureThreshold_low")),
+                    "mid": float(kv.pop("lectureThreshold_mid")),
+                    "high": float(kv.pop("lectureThreshold_high")),
+                }
+            # merge rest
+            for k, v in kv.items():
+                try:
+                    policy[k] = float(v)
+                except (TypeError, ValueError):
+                    policy[k] = v
+        except Exception as e:
+            print("Warning: failed to load policy file – using defaults:", e)
+    return policy
 
-def loadInstructorTrack(filePath: str) -> dict:
-   try:
-      df = pd.read_excel(filePath)
-      trackDict = pd.Series(df['Track'].values, index=df['Instructor Emplid']).to_dict()
-      return trackDict
-   except Exception as e:
-      print("Error loading instructor track file:", e)
-      return {}
+def loadInstructorTrack(path: str) -> dict:
+    try:
+        df = pd.read_excel(path)
+        return pd.Series(df["Track"].values, index=df["Instructor Emplid"]).to_dict()
+    except Exception as e:
+        print("Warning: failed to load instructor track file:", e)
+        return {}
 
-def loadSpecialCourses(filePath: str) -> set:
-   try:
-      df = pd.read_excel(filePath)
-      specialSet = set(df["Course"].dropna().astype(str).str.strip().str.lower())
-      return specialSet
-   except Exception as e:
-      print("Error loading special courses file:", e)
-      return set()
+def loadSpecialCourses(path: str) -> set:
+    try:
+        df = pd.read_excel(path)
+        return set(df["Course"].dropna().astype(str).str.strip().str.lower())
+    except Exception as e:
+        print("Warning: failed to load special courses file:", e)
+        return set()
 
-################################################################################
-
+# ---------------------------------------------------------------------------
+# Row filter
+# ---------------------------------------------------------------------------
 def rowIsValid(row: pd.Series) -> bool:
-   common = ['Course Category (CCAT)', 'Max Units', 'Enroll Total', 'Instructor Role', 'Instructor Emplid']
-   for col in common:
-      if pd.isna(row.get(col)):
-         return False
-   
-   courseCategory = str(row.get('Course Category (CCAT)', '')).lower()
-   exemptKeywords = ["independent study", "research", "thesis", "dissertation", "fieldwork"]
-   
-   if any(keyword in courseCategory for keyword in exemptKeywords):
-        return True
+    """Return True if row contains required info for workload calc."""
+    required = ["Course Category (CCAT)", "Max Units", "Enroll Total",
+                "Instructor Role", "Instructor Emplid"]
+    if any(pd.isna(row.get(c)) for c in required):
+        return False
+    ccat = _norm(row.get("Course Category (CCAT)"))
 
-   else:
-      meeting = ['Start Date', 'Start Time', 'Facility Room', 'Facility Building']
-      for col in meeting:
-         if pd.isna(row.get(col)):
-            return False
-         
-      return True
+    exempt = {"independent study", "research", "thesis", "dissertation", "fieldwork"}
+    if any(k in ccat for k in exempt):
+        return True  # exempt from meeting info requirement
 
-################################################################################
-SPECIAL_COURSES_EXTRA_RATE = 0.005
+    meeting_cols = ["Start Date", "Start Time", "Facility Building", "Facility Room"]
+    return not any(pd.isna(row.get(c)) for c in meeting_cols)
 
+# ---------------------------------------------------------------------------
+# Constants for special detection
+# ---------------------------------------------------------------------------
+GRADING_INTENSIVE_KEYWORDS = {"capstone", "writing intensive", "w-intensive"}
+FIELD_TRIP_KEYWORDS = {"field trip"}
+FIELD_TRIP_BONUS_WLU = 0.15                # flat WLU bump
+SPECIAL_COURSES_EXTRA_RATE = 0.005         # extra per‑unit bump
+COMMITTEE_MEMBER_WLU = 0.30     # 1 % of AY = 0.30 WLU
+
+# ---------------------------------------------------------------------------
+# Course object
+# ---------------------------------------------------------------------------
 class Course:
-   def __init__(self, data: dict, policyParams: dict, specialCourses: set):
-      self.rawData = data
+    def __init__(self, data: dict, policy: dict, specialCourses: Set[str]):
+        self.rawData = data
+        self.policy = policy
+        self.specialCourses = specialCourses
 
-      self.courseCategory = str(data.get('Course Category (CCAT)', '')).strip().lower()
+        # Basic attributes
+        self.courseCategory = _norm(data.get("Course Category (CCAT)")) or ""
+        self.classDescription = _norm(data.get("Class Description")) or ""
+        self.catNbr = str(data.get("Cat Nbr", "")).strip()
+        self.instructorRole = _norm(data.get("Instructor Role")) or ""
 
-      try:
-         self.maxUnits = float(data.get('Max Units', 0))
-      except(ValueError, TypeError):
-         self.maxUnits = 0.0
-      
-      try:
-         self.enrollTotal = int(data.get('Enroll Total', 0))
-      except(ValueError, TypeError):
-         self.enrollTotal = 0
-      
-      self.classDescription = str(data.get('Class Description', '')).strip().lower()
-      self.instructorRole = str(data.get('Instructor Role', '')).strip().upper()
-      self.startDate = data.get('Start Date', None)
-      self.startTime = data.get('Start Time', None)
-      self.facilityRoom = str(data.get('Facility Room', '')).strip()
-      self.facilityBuilding = str(data.get('Facility Building', '')).strip()
-      self.unit = str(data.get('Unit', '')).strip()
-      self.policyParams = policyParams
-      self.specialCourses = specialCourses
-      self.load = None
+        # Numeric attributes
+        self.maxUnits = float(data.get("Max Units", 0) or 0)
+        self.enrollTotal = int(data.get("Enroll Total", 0) or 0)
+        self.instructorEmplid = (
+            int(float(data.get("Instructor Emplid", 0)))
+            if pd.notna(data.get("Instructor Emplid"))
+            else None
+        )
 
-   def getGroupKey(self) -> tuple:
-      term = self.rawData.get('Term')
-      subject = self.rawData.get('Subject')
-      catNbr = self.rawData.get('Cat Nbr')
-      section = self.rawData.get('Section')
-      instructor = self.rawData.get('Instructor Emplid')
+        # Meeting info
+        self.startDate = data.get("Start Date")
+        self.startTime = data.get("Start Time")
+        self.facilityBuilding = data.get("Facility Building")
+        self.facilityRoom = data.get("Facility Room")
 
-      if any(keyword in self.courseCategory for keyword in ["research", "thesis", "dissertation"]):
-         return (instructor, self.startDate, term, subject, "research")
-      
-      else:
-         if term and subject and catNbr and section:
-            return (str(term).strip().lower(),
-                    str(subject).strip().lower(),
-                    str(catNbr).strip().lower(),
-                    str(section).strip().lower())
-         else:
-            return (self.startDate, self.instructorRole)
-          
-   def getBaseRate(self) -> float:
-      policyRate = self.policyParams
+        # Flags
+        self.isGradingIntensive = any(k in self.classDescription for k in GRADING_INTENSIVE_KEYWORDS) or self.catNbr.endswith("W")
+        self.isThesis = any(k in self.courseCategory for k in ("thesis", "dissertation")) or self.catNbr in {"699", "799"}
+        self.hasFieldTrip = any(k in self.classDescription for k in FIELD_TRIP_KEYWORDS)
 
-      if any(keyword in self.courseCategory for keyword in ["independent study", 
-                            "research", "thesis", "dissertation", "fieldwork"]):
-         return float(policyRate.get('independentStudyRate', 0.33))
-      
-      elif "laboratory" in self.courseCategory:
-         return float(policyRate.get('laboratoryRate', 4.17))
-      
-      elif any(keyword in self.courseCategory for keyword in ["recitation", 
-                                                         "seminar", "lecture"]):
-         return float(policyRate.get('lectureRate', 3.33))
-      
-      else:
-         return float(policyRate.get('lectureRate', 3.33))
-      
-   def adjustForEnrollment(self, baseRate: float) -> float:
-      studentNumber = self.enrollTotal
-      policyRate = self.policyParams
-      thresholds = policyRate.get('lectureThreshold', {'low': 90, 'mid': 150, 'high': 200})
+        self.unit = str(data.get("Unit", "")).strip()
+        self.load: float | None = None
 
-      low = float(thresholds.get('low', 90))
-      mid = float(thresholds.get('mid', 150))
-      high = float(thresholds.get('high', 200))
+    # ---------------- grouping helpers ----------------
+    def _meeting_signature(self):
+        return _meeting_signature(self.rawData)
 
-      if "lecture" in self.courseCategory:
-         if studentNumber < low:
-            return baseRate
-         
-         elif low <= studentNumber <= mid:
-            rate = float(policyRate.get('lectureRate', 3.33) + ((studentNumber - thresholds.get('low', 90)) /
-                   (thresholds.get('mid', 150) - thresholds.get('low', 90))) * (policyRate.get('midRate', 4.17) - policyRate.get('lectureRate', 3.33)))
-            return rate
-         
-         elif mid < studentNumber <= high:
-            rate = float(policyRate.get('midRate', 4.17) + ((studentNumber - thresholds.get('mid', 150)) /
-                      (thresholds.get('high', 200) - thresholds.get('mid', 150))) * (policyRate.get('highRate', 5.0) - policyRate.get('midRate', 4.17)))
-            return rate
-         
-         else:
-            return float(policyRate.get('highRate', 5.0))
-         
-      else:
-         return baseRate
-      
-   def calculateLoad(self) -> float:
-      if self.enrollTotal == 0:
-         self.load = 0.0
-         return self.load
+    def getGroupKey(self) -> Tuple:
+        """Key for team‑taught grouping (same course & meeting)."""
+        if any(k in self.courseCategory for k in ("research", "thesis", "dissertation")):
+            return (self.instructorEmplid,
+                    self.startDate,
+                    self.rawData.get("Term"),
+                    self.rawData.get("Subject"),
+                    "research")
+        term = _norm(self.rawData.get("Term"))
+        subject = _norm(self.rawData.get("Subject"))
+        section = _norm(self.rawData.get("Section"))
+        return (term, subject, self.catNbr.lower(), section) + self._meeting_signature()
 
-      policyRate = self.policyParams
+    # ---------------- rate helpers ----------------
+    def _baseRate(self) -> float:
+        p = self.policy
+        if self.isThesis:
+            return float(p.get("thesisRate", 3.33))
+        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
+            return float(p.get("independentStudyRate", 0.33))
+        if "laboratory" in self.courseCategory:
+            return float(p.get("laboratoryRate", 4.17))
+        return float(p.get("lectureRate", 3.33))
 
-      if any(keyword in self.courseCategory for keyword in ["independent study", 
-                            "research", "thesis", "dissertation", "fieldwork"]):
-         baseRate = self.getBaseRate()
-         load = self.maxUnits * (baseRate * self.enrollTotal)
-         load = min(load, policyRate.get('maxLoadCap', 5.0))
+    def _adjustForEnrollment(self, base: float) -> float:
+        if "lecture" not in self.courseCategory or self.isGradingIntensive:
+            return base
+        p = self.policy
+        low, mid, high = (float(p["lectureThreshold"][k]) for k in ("low", "mid", "high"))
+        s = self.enrollTotal
+        if s < low:
+            return base
+        if low <= s <= mid:
+            return float(p["lectureRate"] + (s - low)/(mid - low)*(p["midRate"] - p["lectureRate"]))
+        if mid < s <= high:
+            return float(p["midRate"] + (s - mid)/(high - mid)*(p["highRate"] - p["midRate"]))
+        return float(p["highRate"])
 
-      else:
-         baseRate = self.getBaseRate()
-         adjustedRate = self.adjustForEnrollment(baseRate)
-         load = self.maxUnits * adjustedRate 
+    # ---------------- public API ----------------
+    def calculateLoad(self) -> float:
+        if self.load is not None:
+            return self.load
 
-         if "lecture" in self.courseCategory:
-            maxRate = (20.0 / 3.0)
-            maxload = self.maxUnits * maxRate
-            load = min(load, maxload)
-      
-      extraLoad = 0.0
+        if self.enrollTotal == 0:
+            self.load = 0.0
+            return self.load
 
-      for specialCode in self.specialCourses:
-         if specialCode in self.classDescription:
-            extraLoad = self.maxUnits * SPECIAL_COURSES_EXTRA_RATE
-            break
-      
-      self.load = load + extraLoad
-      return self.load
-   
-   def adjustLoadDivision(self, count: int) -> float:
-      if self.load is None:
-         self.calculateLoad()
-      self.load = self.load / count
-      return self.load
-   
-   def __repr__(self):
+        base = self._baseRate()
+        effective_enroll = min(self.enrollTotal, 24) if self.isGradingIntensive else self.enrollTotal
+
+        if self.isThesis or any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
+            load = self.maxUnits * (base * effective_enroll)
+            load = min(load, self.policy.get("maxLoadCap", 5.0))
+        else:
+            rate = self._adjustForEnrollment(base)
+            load = self.maxUnits * rate
+            if "lecture" in self.courseCategory:
+                load = min(load, self.maxUnits * (20.0/3.0))  # 6.67 WLU/credit cap
+
+        # Special course bumps
+        if any(code in self.classDescription for code in self.specialCourses):
+            load += self.maxUnits * SPECIAL_COURSES_EXTRA_RATE
+        if self.hasFieldTrip:
+            load += FIELD_TRIP_BONUS_WLU
+
+        self.load = load
+        return load
+
+    def adjustLoadDivision(self, divisor: int) -> float:
+        if self.load is None:
+            self.calculateLoad()
+        self.load /= divisor
+        return self.load
+
+    def __repr__(self):
         return f"<Course {self.getGroupKey()}, load: {self.load:.2f}>"
 
-################################################################################
-
+# ---------------------------------------------------------------------------
+# Faculty container
+# ---------------------------------------------------------------------------
 class FacultyMember:
-   def __init__(self, name: str, email: str, emplid: int, initialRole: str, track: str = None):
-      self.name = name
-      self.email = email
-      self.emplid = int(emplid)
-      self.roles = {initialRole}
-      self.courses = {}
-      self.totalLoad = 0.0
-      self.track = track
-      self.trackPercentage = None
+    def __init__(self, name: str, email: str, emplid: int, initialRole: str, track: str | None = None):
+        self.name = name
+        self.email = email
+        self.emplid = int(emplid)
+        self.roles = {initialRole}
+        self.courses: Dict[Tuple, Course] = {}
+        self.totalLoad = 0.0
+        self.track = track
 
-   def addCourse(self, course: Course) -> None:
-      key = course.getGroupKey()
-      if key not in self.courses:
-         self.courses[key] = course
-      self.roles.add(course.instructorRole)
-   
-   def calculateTotalLoad(self) -> float:
-      total = 0.0
-      for course in self.courses.values():
-         if course.load is not None:
-            total += course.load
+    def addCourse(self, course: Course) -> None:
+        self.courses[course.getGroupKey()] = course
+        self.roles.add(course.instructorRole)
 
-         else:   
-            total += course.calculateLoad()
+    def calculateTotalLoad(self) -> float:
+        self.totalLoad = sum(c.calculateLoad() for c in self.courses.values())
+        return self.totalLoad
 
-      self.totalLoad = total
-      return total
+# ---------------------------------------------------------------------------
+# Co‑convened adjustment
+# ---------------------------------------------------------------------------
+def adjust_co_convened(courses: Iterable[Course], mode: str = "collapse") -> None:
+    """Collapse or split loads for cross‑listed courses taught simultaneously."""
+    bundles: Dict[Tuple, List[Course]] = defaultdict(list)
+    for c in courses:
+        if c.instructorEmplid is None:
+            continue
+        bundles[(c.instructorEmplid, c._meeting_signature())].append(c)
 
-   def calculatePercentage(self) -> float:
-      if self.track and self.track.upper() == "CT":
-         self.trackPercentage = (self.totalLoad / 40.0) * 100
-      
-      else:
-         self.trackPercentage = (self.totalLoad / 30.0) * 100
-      
-      return self.trackPercentage
+    for same_meeting in bundles.values():
+        if len(same_meeting) <= 1:
+            continue
 
-################################################################################
-# MAIN PROCESSING PORTION OF ALGORITHM
-################################################################################
-
-def main():
-   converters = {
-    'Max Units': lambda x: float(x) if pd.notna(x) else 0.0,
-    'Enroll Total': lambda x: int(float(x)) if pd.notna(x) else 0
-   }
-
-   rawCourseDataFile = "FIle 1 choke a goat.xlsx"
-   fileSheetName = "Raw Data"
-   rawCourseData = pd.read_excel(rawCourseDataFile, sheet_name=fileSheetName, converters=converters)
-   rawCourseData = rawCourseData[rawCourseData.apply(rowIsValid, axis=1)].reset_index(drop=True)
-
-   policyFile = "workload_policy.xlsx"
-   policyParams = loadWorkloadPolicy(policyFile)
-
-   instructorTrackFile = "FIle 1b CC or TT.xlsx"
-   instructorTracks = loadInstructorTrack(instructorTrackFile)
-
-   specialCoursesFile= "CEFNS courses with extra load assigned.xlsx"
-   specialCourses = loadSpecialCourses(specialCoursesFile)
-
-   facultyDict = {}
-   otherStaff = {}
-   courseGroups = {}
-
-   for _, row in rawCourseData.iterrows():
-      role = str(row.get('Instructor Role', '')).strip().upper()
-   
-      if role != "PI":
-         emplid = str(row.get('Instructor Emplid', '')).strip()
-         otherStaff.setdefault(emplid, []).append(row.to_dict())
-         continue
-
-      emplid = int(float(row.get('Instructor Emplid', 0)))
-
-      if emplid not in instructorTracks:
-         otherStaff.setdefault(str(emplid), []).append(row.to_dict())
-         continue
-   
-      name = row.get('Instructor', '')
-      email = row.get('Instructor Email', '')
-
-      courseObject = Course(row.to_dict(), policyParams, specialCourses)
-      groupKey = courseObject.getGroupKey()
-      courseGroups.setdefault(groupKey, []).append(courseObject)
-
-      track = instructorTracks.get(emplid, None)
-      if emplid not in facultyDict:
-         facultyDict[emplid] = FacultyMember(name, email, emplid, role, track)
-      facultyDict[emplid].addCourse(courseObject)
-      
-   for groupKey, courses in courseGroups.items():
-      if len(courses) > 1:
-         count = len(courses)
-
-         for courseObject in courses:
-            courseObject.adjustLoadDivision(count)
-
-   for emplid, faculty in facultyDict.items():
-      faculty.calculateTotalLoad()
-      percentage = faculty.calculatePercentage()
-      print(f"Faculty: {faculty.name}, (ID: {faculty.emplid})")
-      if faculty.track and faculty.track.upper() == "CT":
-         print(f"{faculty.totalLoad:.2f}\n   CT Percentage (baseline 40%): {percentage:.2f}%\n")
-      else:
-         print(f"{faculty.totalLoad:.2f}\n   TT Percentage (baseline 30%): {percentage:.2f}%\n")
-      print(f"Courses: {faculty.courses}\n")
-
-if __name__ == "__main__":
-   main()
+        if mode == "collapse":
+            combined_enroll = sum(c.enrollTotal for c in same_meeting)
+            rep = same_meeting[0]
+            rep.enrollTotal = combined_enroll
+            rep.calculateLoad()
+            for extra in same_meeting[1:]:
+                extra.load = COMMITTEE_MEMBER_WLU
+        elif mode == "split":
+            for c in same_meeting:
+                c.calculateLoad()
+            share = 1.0 / len(same_meeting)
+            for c in same_meeting:
+                c.load *= share
+        else:
+            raise ValueError("mode must be 'collapse' or 'split'")
