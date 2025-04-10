@@ -63,7 +63,7 @@ class ExcelProcessor(QThread):
                     continue
 
                 course = Course(row.to_dict(), policy, special)
-                key = course.getGroupKey()
+                key = course.getGroupKeyForGrouping()
                 courseGroups.setdefault(key, []).append(course)
 
                 if emplid not in faculty:
@@ -72,14 +72,19 @@ class ExcelProcessor(QThread):
 
             # 4) Team‑taught division
             for lst in courseGroups.values():
-                pi_only = [c for c in lst if c.instructorRole == "PI"]
+                pi_only = [c for c in lst if str(c.instructorRole).strip().upper() == "PI"]
                 unique_emplids = {c.instructorEmplid for c in pi_only}
-                if len(unique_emplids) > 1:
+                if len(unique_emplids) >= 2:
                     for c in pi_only:
                         c.adjustLoadDivision(len(unique_emplids))
 
             # 5) Co‑convened adjustment
             adjust_co_convened([c for lst in courseGroups.values() for c in lst], mode='collapse')
+
+            # 6) Recalculate all loads after adjustments
+            for fac in faculty.values():
+                for c in fac.courses.values():
+                    c.load = c.calculateLoad()
 
             # 6) Calculate summary
             summary_rows = []

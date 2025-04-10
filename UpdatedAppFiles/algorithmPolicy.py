@@ -1,4 +1,3 @@
-
 import pandas as pd
 from collections import defaultdict
 from typing import Iterable, Dict, List, Tuple, Set
@@ -111,12 +110,13 @@ class Course:
         self.courseCategory = _norm(data.get("Course Category (CCAT)"))
         self.classDescription = _norm(data.get("Class Description"))
         cat_raw = str(data.get("Cat Nbr", "")).strip()
-        self.catNbr = cat_raw.split(".")[0] if cat_raw.replace(".", "").isdigit() else cat_raw
+        self.catNbr = str(int(float(cat_raw))) if cat_raw.replace(".", "", 1).isdigit() else cat_raw
         self.instructorRole = _norm(data.get("Instructor Role"))
 
         self.maxUnits = float(data.get("Max Units", 0) or 0)
         self.enrollTotal = int(data.get("Enroll Total", 0) or 0)
-        self.instructorEmplid = int(float(data.get("Instructor Emplid", 0))) if pd.notna(data.get("Instructor Emplid")) else None
+        emplid_raw = data.get("Instructor Emplid", None)
+        self.instructorEmplid = int(float(emplid_raw)) if pd.notna(emplid_raw) else None
 
         self.startDate = data.get("Start Date")
         self.startTime = data.get("Start Time")
@@ -124,8 +124,10 @@ class Course:
         self.facilityRoom = data.get("Facility Room")
 
         self.isGradingIntensive = any(k in self.classDescription for k in GRADING_INTENSIVE_KEYWORDS) or self.catNbr.endswith("W")
-        self.isThesis = (any(k in self.courseCategory for k in ("thesis", "dissertation")) or
-                        self.catNbr.replace(".0", "") in {"699", "799"})
+        self.isThesis = (
+            any(k in self.courseCategory for k in ("thesis", "dissertation")) or
+            self.catNbr in {"699", "799"}
+        )
         self.hasFieldTrip = any(k in self.classDescription for k in FIELD_TRIP_KEYWORDS)
 
         self.unit = str(data.get("Unit", "")).strip()
@@ -135,20 +137,18 @@ class Course:
     def _meeting_signature(self):
         return _meeting_signature(self.rawData)
 
-    def getGroupKey(self):
+    def getGroupKeyForGrouping(self):
+        term = self.rawData.get("Term")
+        subject = self.rawData.get("Subject")
+        section = self.rawData.get("Section")
+        return (term, subject, self.catNbr, section) + self._meeting_signature()
+
+    def getGroupKeyForCollapsing(self):
         term = self.rawData.get("Term")
         subject = self.rawData.get("Subject")
         section = self.rawData.get("Section")
         classNbr = self.rawData.get("Class Nbr")
-        instructor_id = self.instructorEmplid
-        meeting_sig = self._meeting_signature()
-    
-        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork", "thesis", "dissertation")):
-            # Independent/research courses are instructor-specific:
-            return (instructor_id, term, subject, self.catNbr, section, classNbr)
-        else:
-            # Regular courses grouped by instructor to avoid misgrouping
-            return (instructor_id, term, subject, self.catNbr, section) + meeting_sig
+        return (self.instructorEmplid, term, subject, self.catNbr, section, classNbr) + self._meeting_signature()
 
     # ------------------------------------------------------------------
     def _baseRate(self):
@@ -176,10 +176,8 @@ class Course:
 
     # ------------------------------------------------------------------
     def calculateLoad(self):
-        if self.load is not None:
-            return self.load
         if self.enrollTotal == 0:
-            self.load = 0.0; return self.load
+            return 0.0
 
         base = self._baseRate()
         eff_enroll = min(self.enrollTotal, 24) if self.isGradingIntensive else self.enrollTotal
@@ -199,16 +197,15 @@ class Course:
         if self.hasFieldTrip:
             load += FIELD_TRIP_BONUS_WLU
 
-        self.load = load
-        return load
+        return round(load, 2)
 
     def adjustLoadDivision(self, d):
+        if d <= 1:
+            return self.load
         if self.load is None:
-            self.calculateLoad()
-        self.load /= d; return self.load
-
-    def __repr__(self):
-        return f"<Course {self.getGroupKey()}, load: {self.load:.2f}>"
+            self.load = self.calculateLoad()
+        self.load /= d 
+        return self.load
 
 # ---------------------------------------------------------------------------
 # Faculty container
@@ -220,7 +217,7 @@ class FacultyMember:
         self.roles = {initialRole}; self.courses = {}; self.totalLoad = 0.0; self.track = track
 
     def addCourse(self, course):
-        self.courses[course.getGroupKey()] = course; self.roles.add(course.instructorRole)
+        self.courses[course.getGroupKeyForGrouping()] = course; self.roles.add(course.instructorRole)
 
     def calculateTotalLoad(self):
         self.totalLoad = sum(c.calculateLoad() for c in self.courses.values()); return self.totalLoad
@@ -232,8 +229,10 @@ class FacultyMember:
 def adjust_co_convened(courses: Iterable[Course], mode: str = "collapse") -> None:
     bundles: Dict[Tuple, List[Course]] = defaultdict(list)
     for c in courses:
-        if c.instructorEmplid is None: continue
-        bundles[(c.instructorEmplid, c._meeting_signature())].append(c)
+        if c.instructorEmplid is None:
+            continue
+        key = c.getGroupKeyForCollapsing()
+        bundles[key].append(c)
 
     for same in bundles.values():
         if len(same) <= 1: continue
