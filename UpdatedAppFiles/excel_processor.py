@@ -91,12 +91,18 @@ class ExcelProcessor(QThread):
             for fac in faculty.values():
                 fac.calculateTotalLoad()
                 units = sorted({getattr(c, 'unit', '') for c in fac.courses.values() if getattr(c, 'unit', '')})
+                course_list = sorted({
+                    f"{c.rawData.get('Subject', '').strip()} {c.catNbr}-{c.rawData.get('Section', '').strip()} - {c.rawData.get('Class Description', '').strip().title()}"
+                    for c in fac.courses.values()
+                })
+                
                 summary_rows.append({
                     'Instructor': fac.name,
                     'Emplid': fac.emplid,
                     'Track': fac.track or 'Unknown',
                     'Total Workload': round(fac.totalLoad, 2),
-                    'Units Taught': ', '.join(units)
+                    'Units Taught': ', '.join(units),
+                    'Courses Taught': '; '.join(course_list)
                 })
 
             summary_df = pd.DataFrame(summary_rows)
