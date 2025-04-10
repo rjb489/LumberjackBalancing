@@ -33,6 +33,10 @@ class ExcelProcessor(QThread):
             }
             raw_df = pd.read_excel(self.raw_file_path, sheet_name='Raw Data', converters=converters)
             raw_df = raw_df[raw_df.apply(rowIsValid, axis=1)].reset_index(drop=True)
+            raw_df = raw_df.drop_duplicates(subset=[
+                'Instructor Emplid', 'Term', 'Subject', 'Cat Nbr', 'Section',
+                'Start Date', 'Start Time', 'Facility Building', 'Facility Room'
+            ])
 
             # 2) Supporting data
             policy = loadWorkloadPolicy(self.policy_file_path) if self.policy_file_path else loadWorkloadPolicy()
@@ -68,9 +72,11 @@ class ExcelProcessor(QThread):
 
             # 4) Team‑taught division
             for lst in courseGroups.values():
-                if len(lst) > 1:
-                    for c in lst:
-                        c.adjustLoadDivision(len(lst))
+                pi_only = [c for c in lst if c.instructorRole == "PI"]
+                unique_emplids = {c.instructorEmplid for c in pi_only}
+                if len(unique_emplids) > 1:
+                    for c in pi_only:
+                        c.adjustLoadDivision(len(unique_emplids))
 
             # 5) Co‑convened adjustment
             adjust_co_convened([c for lst in courseGroups.values() for c in lst], mode='collapse')

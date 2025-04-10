@@ -110,7 +110,8 @@ class Course:
 
         self.courseCategory = _norm(data.get("Course Category (CCAT)"))
         self.classDescription = _norm(data.get("Class Description"))
-        self.catNbr = str(data.get("Cat Nbr", "")).strip()
+        cat_raw = str(data.get("Cat Nbr", "")).strip()
+        self.catNbr = cat_raw.split(".")[0] if cat_raw.replace(".", "").isdigit() else cat_raw
         self.instructorRole = _norm(data.get("Instructor Role"))
 
         self.maxUnits = float(data.get("Max Units", 0) or 0)
@@ -123,7 +124,8 @@ class Course:
         self.facilityRoom = data.get("Facility Room")
 
         self.isGradingIntensive = any(k in self.classDescription for k in GRADING_INTENSIVE_KEYWORDS) or self.catNbr.endswith("W")
-        self.isThesis = any(k in self.courseCategory for k in ("thesis", "dissertation")) or self.catNbr in {"699", "799"}
+        self.isThesis = (any(k in self.courseCategory for k in ("thesis", "dissertation")) or
+                        self.catNbr.replace(".0", "") in {"699", "799"})
         self.hasFieldTrip = any(k in self.classDescription for k in FIELD_TRIP_KEYWORDS)
 
         self.unit = str(data.get("Unit", "")).strip()
@@ -134,10 +136,19 @@ class Course:
         return _meeting_signature(self.rawData)
 
     def getGroupKey(self):
-        if any(k in self.courseCategory for k in ("research", "thesis", "dissertation")):
-            return (self.instructorEmplid, self.startDate, self.rawData.get("Term"), self.rawData.get("Subject"), "research")
-        term = _norm(self.rawData.get("Term")); subj = _norm(self.rawData.get("Subject")); sec = _norm(self.rawData.get("Section"))
-        return (term, subj, self.catNbr.lower(), sec) + self._meeting_signature()
+        term = self.rawData.get("Term")
+        subject = self.rawData.get("Subject")
+        section = self.rawData.get("Section")
+        classNbr = self.rawData.get("Class Nbr")
+        instructor_id = self.instructorEmplid
+        meeting_sig = self._meeting_signature()
+    
+        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork", "thesis", "dissertation")):
+            # Independent/research courses are instructor-specific:
+            return (instructor_id, term, subject, self.catNbr, section, classNbr)
+        else:
+            # Regular courses grouped by instructor to avoid misgrouping
+            return (instructor_id, term, subject, self.catNbr, section) + meeting_sig
 
     # ------------------------------------------------------------------
     def _baseRate(self):
@@ -229,7 +240,7 @@ def adjust_co_convened(courses: Iterable[Course], mode: str = "collapse") -> Non
         if mode == "collapse":
             combined = sum(c.enrollTotal for c in same)
             rep = same[0]; rep.enrollTotal = combined; rep.calculateLoad()
-            for extra in same[1:]: extra.load = 0.0
+            for extra in same[1:]: extra.load = 0.00
         elif mode == "split":
             for c in same: c.calculateLoad()
             share = 1/len(same)
