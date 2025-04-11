@@ -86,7 +86,7 @@ class ExcelProcessor(QThread):
                 for c in fac.courses.values():
                     c.load = c.calculateLoad()
 
-            # 6) Calculate summary
+            # 7) Calculate summary
             summary_rows = []
             for fac in faculty.values():
                 fac.calculateTotalLoad()
@@ -107,7 +107,7 @@ class ExcelProcessor(QThread):
 
             summary_df = pd.DataFrame(summary_rows)
 
-            # 7) Write output
+            # 8) Write output
             out_file = self.raw_file_path.replace('.xlsx', '_summary.xlsx')
             with pd.ExcelWriter(out_file, engine='openpyxl') as writer:
                 raw_df.to_excel(writer, sheet_name='Processed Raw Data', index=False)
