@@ -34,6 +34,7 @@ def loadWorkloadPolicy(path: str | None = None) -> dict:
         "lectureThreshold": {"low": 90, "mid": 150, "high": 200},
         "midRate": 4.17,
         "highRate": 5.0,
+        "maxRate": 6.66
     }
     policy = defaults.copy()
     if path:
@@ -92,8 +93,6 @@ def rowIsValid(row: pd.Series) -> bool:
 # Constants
 # ---------------------------------------------------------------------------
 
-GRADING_INTENSIVE_KEYWORDS = {"capstone", "writing intensive", "w-intensive"}
-FIELD_TRIP_KEYWORDS = {"field trip"}
 FIELD_TRIP_BONUS_WLU = 0.15
 SPECIAL_COURSES_EXTRA_RATE = 0.005
 
@@ -108,7 +107,7 @@ class Course:
         self.special = special
 
         self.courseCategory = _norm(data.get("Course Category (CCAT)"))
-        self.classDescription = _norm(data.get("Class Description"))
+        self.classCat = _norm(data.get("Class"))
         cat_raw = str(data.get("Cat Nbr", "")).strip()
         self.catNbr = str(int(float(cat_raw))) if cat_raw.replace(".", "", 1).isdigit() else cat_raw
         self.instructorRole = _norm(data.get("Instructor Role"))
@@ -123,12 +122,10 @@ class Course:
         self.facilityBuilding = data.get("Facility Building")
         self.facilityRoom = data.get("Facility Room")
 
-        self.isGradingIntensive = any(k in self.classDescription for k in GRADING_INTENSIVE_KEYWORDS) or self.catNbr.endswith("W")
         self.isThesis = (
             any(k in self.courseCategory for k in ("thesis", "dissertation")) or
             self.catNbr in {"699", "799"}
         )
-        self.hasFieldTrip = any(k in self.classDescription for k in FIELD_TRIP_KEYWORDS)
 
         self.unit = str(data.get("Unit", "")).strip()
         self.load: float | None = None
@@ -162,17 +159,20 @@ class Course:
         return float(p.get("lectureRate", 3.33))
 
     def _adjustForEnrollment(self, base):
-        if "lecture" not in self.courseCategory or self.isGradingIntensive:
+        if "lecture" not in self.courseCategory:
             return base
-        p = self.policy; low, mid, high = (float(p["lectureThreshold"][k]) for k in ("low", "mid", "high"))
+        p = self.policy
+        low, mid, high = (float(p["lectureThreshold"][k]) for k in ("low", "mid", "high"))
         s = self.enrollTotal
         if s < low:
             return base
         if low <= s <= mid:
-            return float(p["lectureRate"] + (s - low)/(mid - low)*(p["midRate"] - p["lectureRate"]))
+            return float(p["midRate"])
         if mid < s <= high:
-            return float(p["midRate"] + (s - mid)/(high - mid)*(p["highRate"] - p["midRate"]))
-        return float(p["highRate"])
+            return float(p["highRate"])
+        
+        return float(p["maxRate"])
+        
 
     # ------------------------------------------------------------------
     def calculateLoad(self):
@@ -180,7 +180,7 @@ class Course:
             return 0.0
 
         base = self._baseRate()
-        eff_enroll = min(self.enrollTotal, 24) if self.isGradingIntensive else self.enrollTotal
+        eff_enroll = self.enrollTotal
 
         if self.isThesis or any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
             load = self.maxUnits * (base * eff_enroll)
@@ -192,10 +192,8 @@ class Course:
             if "lecture" in self.courseCategory:
                 load = min(load, self.maxUnits * (20.0/3.0))
 
-        if any(code in self.classDescription for code in self.special):
+        if any(code in self.classCat for code in self.special):
             load += self.maxUnits * SPECIAL_COURSES_EXTRA_RATE
-        if self.hasFieldTrip:
-            load += FIELD_TRIP_BONUS_WLU
 
         return round(load, 2)
 
@@ -213,20 +211,27 @@ class Course:
 
 class FacultyMember:
     def __init__(self, name, email, emplid, initialRole, track=None):
-        self.name = name; self.email = email; self.emplid = int(emplid)
-        self.roles = {initialRole}; self.courses = {}; self.totalLoad = 0.0; self.track = track
+        self.name = name 
+        self.email = email 
+        self.emplid = int(emplid)
+        self.roles = {initialRole} 
+        self.courses = {} 
+        self.totalLoad = 0.0 
+        self.track = track
 
     def addCourse(self, course):
-        self.courses[course.getGroupKeyForGrouping()] = course; self.roles.add(course.instructorRole)
+        self.courses[course.getGroupKeyForGrouping()] = course 
+        self.roles.add(course.instructorRole)
 
     def calculateTotalLoad(self):
-        self.totalLoad = sum(c.calculateLoad() for c in self.courses.values()); return self.totalLoad
+        self.totalLoad = sum(c.calculateLoad() for c in self.courses.values()) 
+        return self.totalLoad
 
 # ---------------------------------------------------------------------------
 # Co‑convened adjustment
 # ---------------------------------------------------------------------------
 
-def adjust_co_convened(courses: Iterable[Course], mode: str = "collapse") -> None:
+def adjust_co_convened(courses: Iterable[Course]) -> None:
     bundles: Dict[Tuple, List[Course]] = defaultdict(list)
     for c in courses:
         if c.instructorEmplid is None:
@@ -235,14 +240,11 @@ def adjust_co_convened(courses: Iterable[Course], mode: str = "collapse") -> Non
         bundles[key].append(c)
 
     for same in bundles.values():
-        if len(same) <= 1: continue
-        if mode == "collapse":
-            combined = sum(c.enrollTotal for c in same)
-            rep = same[0]; rep.enrollTotal = combined; rep.calculateLoad()
-            for extra in same[1:]: extra.load = 0.00
-        elif mode == "split":
-            for c in same: c.calculateLoad()
-            share = 1/len(same)
-            for c in same: c.load *= share
-        else:
-            raise ValueError("mode must be 'collapse' or 'split'")
+        if len(same) <= 1: 
+            continue
+        combined = sum(c.enrollTotal for c in same)
+        rep = same[0] 
+        rep.enrollTotal = combined
+        rep.calculateLoad()
+        for extra in same[1:]: 
+            extra.load = 0.00

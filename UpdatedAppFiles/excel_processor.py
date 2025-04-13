@@ -50,13 +50,11 @@ class ExcelProcessor(QThread):
 
             for _, row in raw_df.iterrows():
                 role = str(row.get('Instructor Role', '')).strip().upper()
-                if role != 'PI':
-                    other.setdefault(str(row.get('Instructor Emplid', '')), []).append(row.to_dict())
-                    continue
 
                 emplid_val = row.get('Instructor Emplid')
                 if pd.isna(emplid_val):
                     continue
+
                 emplid = int(float(emplid_val))
                 if emplid not in tracks:
                     other.setdefault(str(emplid), []).append(row.to_dict())
@@ -79,7 +77,7 @@ class ExcelProcessor(QThread):
                         c.adjustLoadDivision(len(unique_emplids))
 
             # 5) Co‑convened adjustment
-            adjust_co_convened([c for lst in courseGroups.values() for c in lst], mode='collapse')
+            adjust_co_convened([c for lst in courseGroups.values() for c in lst])
 
             # 6) Recalculate all loads after adjustments
             for fac in faculty.values():
