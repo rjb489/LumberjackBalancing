@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('favicon.ico', '.'), ('Logo.png', '.'), ('excel_processor.py', '.')],
+    datas=[('favicon.ico', '.'), ('Logo.png', '.'), ('excel_processor.py', '.'), ('algorithmPolicy.py', '.')],
     hiddenimports=['pandas', 'openpyxl'],
     hookspath=[],
     hooksconfig={},

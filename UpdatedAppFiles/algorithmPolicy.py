@@ -25,6 +25,7 @@ def _meeting_signature(row_or_course) -> Tuple:
 
 def loadWorkloadPolicy(path: str | None = None) -> dict:
     defaults = {
+        "specialCoursesRate": 0.005,
         "independentStudyRate": 0.33,
         "laboratoryRate": 4.17,
         "lectureRate": 3.33,
@@ -88,13 +89,6 @@ def rowIsValid(row: pd.Series) -> bool:
         return True
     meeting_cols = ["Start Date", "Start Time", "Facility Building", "Facility Room"]
     return not any(pd.isna(row.get(c)) for c in meeting_cols)
-
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-FIELD_TRIP_BONUS_WLU = 0.15
-SPECIAL_COURSES_EXTRA_RATE = 0.005
 
 # ---------------------------------------------------------------------------
 # Course object
@@ -193,7 +187,7 @@ class Course:
                 load = min(load, self.maxUnits * (20.0/3.0))
 
         if any(code in self.classCat for code in self.special):
-            load += self.maxUnits * SPECIAL_COURSES_EXTRA_RATE
+            load += self.maxUnits * self.policy.get("specialCoursesRate", 0.005)
 
         return round(load, 2)
 
