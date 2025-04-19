@@ -53,7 +53,7 @@ class ExcelProcessor(QThread):
                 'Instructor Emplid', 'Term', 'Subject', 'Cat Nbr', 'Section',
                 'Start Date', 'Start Time', 'Facility Building', 'Facility Room'
             ])
-
+            
             # 2) Supporting data
             policy = loadWorkloadPolicy(self.policy_file_path) if self.policy_file_path else loadWorkloadPolicy()
             tracks = loadInstructorTrack(self.track_file_path) if self.track_file_path else {}
@@ -86,10 +86,16 @@ class ExcelProcessor(QThread):
 
             # 4) Team‑taught division
             for lst in courseGroups.values():
-                pi_only = [c for c in lst if str(c.instructorRole).strip().upper() == "PI"]
+                valid = [c for c in lst if all(c._meeting_signature())]
+                pi_only = [c for c in valid if c.instructorRole.upper()=="PI"]
                 unique_emplids = {c.instructorEmplid for c in pi_only}
                 if len(unique_emplids) >= 2:
+                    names = [c.rawData.get('Instructor','').strip() for c in pi_only]
                     for c in pi_only:
+                        c.team_taught_members = [
+                            n for n in names 
+                            if n != c.rawData.get('Instructor','').strip()
+                        ]
                         c.adjustLoadDivision(len(unique_emplids))
 
             # 5) Co‑convened adjustment
@@ -105,11 +111,24 @@ class ExcelProcessor(QThread):
             for fac in faculty.values():
                 fac.calculateTotalLoad()
                 units = sorted({getattr(c, 'unit', '') for c in fac.courses.values() if getattr(c, 'unit', '')})
-                course_list = sorted({
-                    f"{c.rawData.get('Subject', '').strip()} {c.catNbr}-{c.rawData.get('Section', '').strip()} - {c.rawData.get('Class Description', '').strip().title()}"
-                    for c in fac.courses.values()
-                })
-                
+                course_list = []
+                course_list = []
+                for c in fac.courses.values():
+                    # base label
+                    subject = c.rawData.get('Subject','').strip()
+                    section = c.rawData.get('Section','').strip()
+                    desc    = c.rawData.get('Class Description','').strip().title()
+                    label   = f"{subject} {c.catNbr}-{section} – {desc}"
+
+                    # tag on any partner info
+                    if getattr(c, 'co_convened_members', None):
+                        label += f" (co‑convened with {', '.join(c.co_convened_members)})"
+                    if getattr(c, 'team_taught_members', None):
+                        label += f" (team‑taught with {', '.join(c.team_taught_members)})"
+
+                    course_list.append(label)
+
+                course_list.sort()
                 summary_rows.append({
                     'Instructor': fac.name,
                     'Emplid': fac.emplid,

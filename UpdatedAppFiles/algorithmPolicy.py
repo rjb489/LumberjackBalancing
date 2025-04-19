@@ -25,13 +25,13 @@ def _meeting_signature(row_or_course) -> Tuple:
 
 def loadWorkloadPolicy(path: str | None = None) -> dict:
     defaults = {
+        "supplementalInstructionRate": 1.0,
         "specialCoursesRate": 0.005,
-        "independentStudyRate": 0.33,
-        "laboratoryRate": 4.17,
+        "independentStudyRateHigh": 0.5,
+        "independentStudyRateLow": 0.25,
+        "laboratoryRate": 5.0,
         "lectureRate": 3.33,
-        "thesisRate": 3.33,
         "maxLoadCap": 5.0,
-        "thesisCap": 13.33,
         "lectureThreshold": {"low": 90, "mid": 150, "high": 200},
         "midRate": 4.17,
         "highRate": 5.0,
@@ -83,12 +83,8 @@ def rowIsValid(row: pd.Series) -> bool:
     required = ["Course Category (CCAT)", "Max Units", "Enroll Total", "Instructor Role", "Instructor Emplid"]
     if any(pd.isna(row.get(c)) for c in required):
         return False
-    ccat = _norm(row.get("Course Category (CCAT)"))
-    exempt = {"independent study", "research", "thesis", "dissertation", "fieldwork"}
-    if any(k in ccat for k in exempt):
-        return True
-    meeting_cols = ["Start Date", "Start Time", "Facility Building", "Facility Room"]
-    return not any(pd.isna(row.get(c)) for c in meeting_cols)
+    
+    return True
 
 # ---------------------------------------------------------------------------
 # Course object
@@ -102,6 +98,10 @@ class Course:
 
         self.courseCategory = _norm(data.get("Course Category (CCAT)"))
         self.classCat = _norm(data.get("Class"))
+
+        classNbrRaw = str(data.get("Class Nbr", "")).strip()
+        self.classNbr = str(int(float(classNbrRaw))) if classNbrRaw.replace(".", "", 1).isdigit() else classNbrRaw
+
         cat_raw = str(data.get("Cat Nbr", "")).strip()
         self.catNbr = str(int(float(cat_raw))) if cat_raw.replace(".", "", 1).isdigit() else cat_raw
         self.instructorRole = _norm(data.get("Instructor Role"))
@@ -116,13 +116,11 @@ class Course:
         self.facilityBuilding = data.get("Facility Building")
         self.facilityRoom = data.get("Facility Room")
 
-        self.isThesis = (
-            any(k in self.courseCategory for k in ("thesis", "dissertation")) or
-            self.catNbr in {"699", "799"}
-        )
-
         self.unit = str(data.get("Unit", "")).strip()
         self.load: float | None = None
+
+        self.co_convened_members: List[str] = []
+        self.team_taught_members: List[str] = []
 
     # ------------------------------------------------------------------
     def _meeting_signature(self):
@@ -132,24 +130,29 @@ class Course:
         term = self.rawData.get("Term")
         subject = self.rawData.get("Subject")
         section = self.rawData.get("Section")
-        return (term, subject, self.catNbr, section) + self._meeting_signature()
+        categoryNbr = self.rawData.get("Cat Nbr")
+        classNbr = self.rawData.get("Class Nbr")
+        return (term, subject, categoryNbr, section, classNbr) + self._meeting_signature()
 
     def getGroupKeyForCollapsing(self):
         term = self.rawData.get("Term")
         subject = self.rawData.get("Subject")
         section = self.rawData.get("Section")
-        classNbr = self.rawData.get("Class Nbr")
-        return (self.instructorEmplid, term, subject, self.catNbr, section, classNbr) + self._meeting_signature()
+        return (self.instructorEmplid, term, subject, section) + self._meeting_signature()
 
     # ------------------------------------------------------------------
     def _baseRate(self):
         p = self.policy
-        if self.isThesis:
-            return float(p.get("thesisRate", 3.33))
-        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
-            return float(p.get("independentStudyRate", 0.33))
+        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork", "research - experiential", "individualized study - experie")):
+            if self.maxUnits > 0 and self.maxUnits <= 2:
+                return float(p.get("independentStudyRateLow", 0.25))
+            elif self.maxUnits > 2:
+                return float(p.get("independentStudyRateHigh", 0.5))
         if "laboratory" in self.courseCategory:
-            return float(p.get("laboratoryRate", 4.17))
+            return float(p.get("laboratoryRate", 5.0))
+        if "supplemental instrcuction" in self.courseCategory:
+            return float(p.get("supplementalInstructionRate", 1.0))
+
         return float(p.get("lectureRate", 3.33))
 
     def _adjustForEnrollment(self, base):
@@ -176,10 +179,14 @@ class Course:
         base = self._baseRate()
         eff_enroll = self.enrollTotal
 
-        if self.isThesis or any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
-            load = self.maxUnits * (base * eff_enroll)
-            cap = self.policy.get("thesisCap", 13.33) if self.isThesis else self.policy.get("maxLoadCap", 5.0)
+        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
+            load = base * eff_enroll
+            cap = self.policy.get("maxLoadCap", 5.0)
             load = min(load, cap)
+
+        elif self.courseCategory == "supplemental instruction":
+            load = base
+
         else:
             rate = self._adjustForEnrollment(base)
             load = self.maxUnits * rate
@@ -230,15 +237,138 @@ def adjust_co_convened(courses: Iterable[Course]) -> None:
     for c in courses:
         if c.instructorEmplid is None:
             continue
+        
+        if not all(c._meeting_signature()):
+            continue
+
         key = c.getGroupKeyForCollapsing()
         bundles[key].append(c)
 
     for same in bundles.values():
         if len(same) <= 1: 
             continue
+        
+        ids = [
+            f"{c.rawData.get('Subject','').strip()} {c.catNbr}-{c.rawData.get('Section','').strip()}"
+            for c in same
+        ]
+
+        for c in same:
+            me = f"{c.rawData.get('Subject','').strip()} {c.catNbr}-{c.rawData.get('Section','').strip()}"
+            c.co_convened_members = [other for other in ids if other != me]
+
         combined = sum(c.enrollTotal for c in same)
         rep = same[0] 
         rep.enrollTotal = combined
-        rep.calculateLoad()
+        rep.load = rep.calculateLoad()
         for extra in same[1:]: 
-            extra.load = 0.00
+            extra.enrollTotal = 0
+            extra.maxUnits = 0
+            extra.load = 0
+
+
+################################################################################
+'''
+def main():
+            converters = {
+                'Max Units': lambda x: float(x) if pd.notna(x) else 0.0,
+                'Enroll Total': lambda x: int(float(x)) if pd.notna(x) else 0
+            }
+            raw_df = pd.read_excel("FIle 1 choke a goat.xlsx", sheet_name='Raw Data', converters=converters)
+            raw_df = raw_df[raw_df.apply(rowIsValid, axis=1)].reset_index(drop=True)
+            raw_df = raw_df.drop_duplicates(subset=[
+                'Instructor Emplid', 'Term', 'Subject', 'Cat Nbr', 'Section',
+                'Start Date', 'Start Time', 'Facility Building', 'Facility Room'
+            ])
+            
+            # 2) Supporting data
+            policy = loadWorkloadPolicy("workload_policy.xlsx")
+            tracks = loadInstructorTrack("FIle 1b CC or TT.xlsx")
+            special = loadSpecialCourses("CEFNS courses with extra load assigned.xlsx")
+
+            # 3) Build structures
+            faculty = {}
+            courseGroups = {}
+            other = {}
+
+            for _, row in raw_df.iterrows():
+                role = str(row.get('Instructor Role', '')).strip().upper()
+
+                emplid_val = row.get('Instructor Emplid')
+                if pd.isna(emplid_val):
+                    continue
+
+                emplid = int(float(emplid_val))
+                if emplid not in tracks:
+                    other.setdefault(str(emplid), []).append(row.to_dict())
+                    continue
+
+                course = Course(row.to_dict(), policy, special)
+                key = course.getGroupKeyForGrouping()
+                courseGroups.setdefault(key, []).append(course)
+
+                if emplid not in faculty:
+                    faculty[emplid] = FacultyMember(row.get('Instructor', ''), row.get('Instructor Email', ''), emplid, role, tracks[emplid])
+                faculty[emplid].addCourse(course)
+
+            # 4) Team‑taught division
+            for lst in courseGroups.values():
+                valid = [c for c in lst if all(c._meeting_signature())]
+                pi_only = [c for c in valid if c.instructorRole.upper()=="PI"]
+                unique_emplids = {c.instructorEmplid for c in pi_only}
+                if len(unique_emplids) >= 2:
+                    names = [c.rawData.get('Instructor','').strip() for c in pi_only]
+                    for c in pi_only:
+                        c.team_taught_members = [
+                            n for n in names 
+                            if n != c.rawData.get('Instructor','').strip()
+                        ]
+                        c.adjustLoadDivision(len(unique_emplids))
+
+            # 5) Co‑convened adjustment
+            adjust_co_convened([c for lst in courseGroups.values() for c in lst])
+
+            # 6) Recalculate all loads after adjustments
+            for fac in faculty.values():
+                for c in fac.courses.values():
+                    c.load = c.calculateLoad()
+
+            # 7) Calculate summary
+            summary_rows = []
+            for fac in faculty.values():
+                fac.calculateTotalLoad()
+                units = sorted({getattr(c, 'unit', '') for c in fac.courses.values() if getattr(c, 'unit', '')})
+                course_list = []
+                course_list = []
+                for c in fac.courses.values():
+                    # base label
+                    subject = c.rawData.get('Subject','').strip()
+                    section = c.rawData.get('Section','').strip()
+                    desc    = c.rawData.get('Class Description','').strip().title()
+                    label   = f"{subject} {c.catNbr}-{section} – {desc}"
+
+                    # tag on any partner info
+                    if getattr(c, 'co_convened_members', None):
+                        label += f" (co‑convened with {', '.join(c.co_convened_members)})"
+                    if getattr(c, 'team_taught_members', None):
+                        label += f" (team‑taught with {', '.join(c.team_taught_members)})"
+
+                    course_list.append(label)
+
+                course_list.sort()
+                summary_rows.append({
+                    'Instructor': fac.name,
+                    'Emplid': fac.emplid,
+                    'Track': fac.track or 'Unknown',
+                    'Total Workload': round(fac.totalLoad, 2),
+                    'Units Taught': ', '.join(units),
+                    'Courses Taught': '; '.join(course_list)
+                })
+
+            for index in summary_rows:
+                print(index)
+
+if __name__ == "__main__":
+    main()
+
+'''
