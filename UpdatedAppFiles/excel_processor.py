@@ -51,7 +51,7 @@ class ExcelProcessor(QThread):
             raw_df = raw_df[raw_df.apply(rowIsValid, axis=1)].reset_index(drop=True)
             raw_df = raw_df.drop_duplicates(subset=[
                 'Instructor Emplid', 'Term', 'Subject', 'Cat Nbr', 'Section',
-                'Start Date', 'Start Time', 'Facility Building', 'Facility Room'
+                'Start Date', 'End Date', 'Start Time', 'End Time', 'Facility Building', 'Facility Room', 'Days'
             ])
             
             # 2) Supporting data
@@ -101,17 +101,12 @@ class ExcelProcessor(QThread):
             # 5) Co‑convened adjustment
             adjust_co_convened([c for lst in courseGroups.values() for c in lst])
 
-            # 6) Recalculate all loads after adjustments
-            for fac in faculty.values():
-                for c in fac.courses.values():
-                    c.load = c.calculateLoad()
-
-            # 7) Calculate summary
+            # 8) Calculate summary
             summary_rows = []
             for fac in faculty.values():
                 fac.calculateTotalLoad()
                 units = sorted({getattr(c, 'unit', '') for c in fac.courses.values() if getattr(c, 'unit', '')})
-                course_list = []
+
                 course_list = []
                 for c in fac.courses.values():
                     # base label
@@ -140,7 +135,7 @@ class ExcelProcessor(QThread):
 
             summary_df = pd.DataFrame(summary_rows)
 
-            # 8) Write output
+            # 9) Write output
             out_file = self.raw_file_path.replace('.xlsx', '_summary.xlsx')
             with pd.ExcelWriter(out_file, engine='openpyxl') as writer:
                 raw_df.to_excel(writer, sheet_name='Processed Raw Data', index=False)

@@ -14,7 +14,10 @@ def _meeting_signature(row_or_course) -> Tuple:
     data = row_or_course.rawData if hasattr(row_or_course, "rawData") else row_or_course
     return (
         data.get("Start Date"),
+        data.get("End Date"),
         data.get("Start Time"),
+        data.get("End Date"),
+        data.get("Days"),
         _norm(data.get("Facility Building")),
         _norm(data.get("Facility Room")),
     )
@@ -150,7 +153,7 @@ class Course:
                 return float(p.get("independentStudyRateHigh", 0.5))
         if "laboratory" in self.courseCategory:
             return float(p.get("laboratoryRate", 5.0))
-        if "supplemental instrcuction" in self.courseCategory:
+        if any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
             return float(p.get("supplementalInstructionRate", 1.0))
 
         return float(p.get("lectureRate", 3.33))
@@ -174,8 +177,12 @@ class Course:
     # ------------------------------------------------------------------
     def calculateLoad(self):
         if self.enrollTotal == 0:
+            self.load = 0.0
             return 0.0
-
+        
+        if self.load is not None:
+            return self.load
+        
         base = self._baseRate()
         eff_enroll = self.enrollTotal
 
@@ -184,7 +191,7 @@ class Course:
             cap = self.policy.get("maxLoadCap", 5.0)
             load = min(load, cap)
 
-        elif self.courseCategory == "supplemental instruction":
+        elif any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
             load = base
 
         else:
@@ -196,6 +203,7 @@ class Course:
         if any(code in self.classCat for code in self.special):
             load += self.maxUnits * self.policy.get("specialCoursesRate", 0.005)
 
+        self.load = load
         return round(load, 2)
 
     def adjustLoadDivision(self, d):
@@ -278,7 +286,7 @@ def main():
             raw_df = raw_df[raw_df.apply(rowIsValid, axis=1)].reset_index(drop=True)
             raw_df = raw_df.drop_duplicates(subset=[
                 'Instructor Emplid', 'Term', 'Subject', 'Cat Nbr', 'Section',
-                'Start Date', 'Start Time', 'Facility Building', 'Facility Room'
+                'Start Date', 'End Date', 'Start Time', 'End Time', 'Facility Building', 'Facility Room', 'Days'
             ])
             
             # 2) Supporting data
@@ -338,7 +346,7 @@ def main():
             for fac in faculty.values():
                 fac.calculateTotalLoad()
                 units = sorted({getattr(c, 'unit', '') for c in fac.courses.values() if getattr(c, 'unit', '')})
-                course_list = []
+
                 course_list = []
                 for c in fac.courses.values():
                     # base label
