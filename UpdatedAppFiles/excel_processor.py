@@ -101,7 +101,7 @@ class ExcelProcessor(QThread):
             # 5) Co‑convened adjustment
             adjust_co_convened([c for lst in courseGroups.values() for c in lst])
 
-            # 8) Calculate summary
+            # 6) Calculate summary
             summary_rows = []
             for fac in faculty.values():
                 fac.calculateTotalLoad()
@@ -135,7 +135,7 @@ class ExcelProcessor(QThread):
 
             summary_df = pd.DataFrame(summary_rows)
 
-            # 9) Write output
+            # 7) Write output
             out_file = self.raw_file_path.replace('.xlsx', '_summary.xlsx')
             with pd.ExcelWriter(out_file, engine='openpyxl') as writer:
                 raw_df.to_excel(writer, sheet_name='Processed Raw Data', index=False)

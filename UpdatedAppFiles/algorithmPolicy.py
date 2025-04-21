@@ -278,6 +278,7 @@ def adjust_co_convened(courses: Iterable[Course]) -> None:
 ################################################################################
 '''
 def main():
+            # 1) Load raw data
             converters = {
                 'Max Units': lambda x: float(x) if pd.notna(x) else 0.0,
                 'Enroll Total': lambda x: int(float(x)) if pd.notna(x) else 0
@@ -336,12 +337,7 @@ def main():
             # 5) Co‑convened adjustment
             adjust_co_convened([c for lst in courseGroups.values() for c in lst])
 
-            # 6) Recalculate all loads after adjustments
-            for fac in faculty.values():
-                for c in fac.courses.values():
-                    c.load = c.calculateLoad()
-
-            # 7) Calculate summary
+            # 6) Calculate summary
             summary_rows = []
             for fac in faculty.values():
                 fac.calculateTotalLoad()
