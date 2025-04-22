@@ -19,6 +19,8 @@ from openpyxl.chart.series import DataPoint
 from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.styles import PatternFill
 from collections import defaultdict
+from openpyxl.utils import get_column_letter
+
 
 from algorithmPolicy import (
     loadWorkloadPolicy, loadInstructorTrack, loadSpecialCourses,
@@ -156,6 +158,50 @@ class ExcelProcessor(QThread):
         except Exception as e:
             self.error.emit(str(e))
 
+def add_glossary_sheet(wb, instructors: dict[int, FacultyMember]):
+    """
+    Creates the final “Glossary” tab – one block per professor.
+    """
+    ws = wb.create_sheet("Glossary")
+    ws.freeze_panes = "A2"
+
+    ws.column_dimensions[get_column_letter(1)].width = 24   
+    ws.column_dimensions[get_column_letter(2)].width = 18  
+
+    r = 1
+    # instructors is a dict {emplid: FacultyMember}; we want the objects
+    for prof in sorted(instructors.values(), key=lambda p: p.name):
+        # header for this professor
+        ws.cell(r, 1, "Professor Name")
+        ws.cell(r, 2, prof.name)
+        ws.cell(r, 3, "ID")
+        ws.cell(r, 4, prof.emplid)
+        r += 1
+
+        # each course under that professor
+        for course in prof.courses.values():
+            subj   = course.rawData.get("Subject", "").strip()
+            cat    = course.rawData.get("Cat Nbr", "").strip()
+            sect   = course.rawData.get("Section", "").strip()
+            label  = f"{subj} {cat}-{sect}" if subj else course.classDescription.title()
+
+            if course.load is None:
+                course.calculateLoad()
+
+            ws.cell(r, 1, label)
+            #load per class
+            ws.cell(r, 2, f"{course.load * 1:.2f}")
+            r += 1
+
+        # blank spacer between professors
+        r += 1
+
+    # Bold every “Professor Name” label
+    for row in ws['A1':f'A{r}']:
+        if row[0].value == "Professor Name":
+            row[0].font = openpyxl.styles.Font(bold=True)
+
+
 def export_faculty_by_unit(facultyDict, outputFile="faculty_by_unit.xlsx"):
 
     # Define colors
@@ -216,6 +262,7 @@ def export_faculty_by_unit(facultyDict, outputFile="faculty_by_unit.xlsx"):
         chart.add_data(data_ref, titles_from_data=False)
         chart.set_categories(cat_ref)
         chart.dataLabels = DataLabelList()
+        chart.dataLabels.showSerName = False
         chart.dataLabels.showCatName = False
         chart.dataLabels.showVal = False
         chart.series[0].data_points = [
@@ -236,7 +283,7 @@ def export_faculty_by_unit(facultyDict, outputFile="faculty_by_unit.xlsx"):
             pct_tt_other = round(100 * tt_other / total, 2)
         ws["AC10"] = "Category"
         ws["AE10"] = "Percentage"
-        categories = ["CT Well", "CT Other", "TT Well", "TT Other"]
+        categories = ["CT Balanced", "CT Out of Range", "TT Balanced", "TT Out of Range"]
         values = [pct_ct_well, pct_ct_other, pct_tt_well, pct_tt_other]
         row_ptr = 11
         for label, val in zip(categories, values):
@@ -250,6 +297,7 @@ def export_faculty_by_unit(facultyDict, outputFile="faculty_by_unit.xlsx"):
         pie.add_data(data_r, titles_from_data=False)
         pie.set_categories(cat_r)
         pie.dataLabels = DataLabelList()
+        pie.dataLabels.showSerName = False
         pie.dataLabels.showVal = True
         pie.series[0].data_points = [
             DataPoint(idx=0, spPr=GraphicalProperties(solidFill=GREEN)),
@@ -365,8 +413,10 @@ def export_faculty_by_unit(facultyDict, outputFile="faculty_by_unit.xlsx"):
                 else:
                     tt_other_u += 1
                 row_tt += 1
-        add_breakdown_pie_chart(ws, anchor_cell="K15", ct_well=ct_well_u, ct_other=ct_other_u,
+        add_breakdown_pie_chart(ws, anchor_cell="K18", ct_well=ct_well_u, ct_other=ct_other_u,
                                 tt_well=tt_well_u, tt_other=tt_other_u,
                                 chart_title=f"{unit_name}: Performance Breakdown")
+        
+    add_glossary_sheet(wb, facultyDict)
     wb.save(outputFile)
     print(f"Export complete. See '{outputFile}'.")
