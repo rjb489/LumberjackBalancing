@@ -18,8 +18,8 @@ def _meeting_signature(row_or_course) -> Tuple:
         data.get("Start Time"),
         data.get("End Date"),
         data.get("Days"),
-        _norm(data.get("Facility Building")),
-        _norm(data.get("Facility Room")),
+        #_norm(data.get("Facility Building")),
+        #_norm(data.get("Facility Room")),
     )
 
 # ---------------------------------------------------------------------------
@@ -83,7 +83,7 @@ def loadSpecialCourses(p: str) -> set:
 # ---------------------------------------------------------------------------
 
 def rowIsValid(row: pd.Series) -> bool:
-    required = ["Course Category (CCAT)", "Max Units", "Enroll Total", "Instructor Role", "Instructor Emplid"]
+    required = ["Instructor Role", "Instructor Emplid"]
     if any(pd.isna(row.get(c)) for c in required):
         return False
     
@@ -109,8 +109,12 @@ class Course:
         self.catNbr = str(int(float(cat_raw))) if cat_raw.replace(".", "", 1).isdigit() else cat_raw
         self.instructorRole = _norm(data.get("Instructor Role"))
 
-        self.maxUnits = float(data.get("Max Units", 0) or 0)
-        self.enrollTotal = int(data.get("Enroll Total", 0) or 0)
+        numUnits = data.get("Max Units", 0)
+        self.maxUnits = float(numUnits) if pd.notna(numUnits) else 0.0
+
+        numEnroll = data.get("Enroll Total", 0)
+        self.enrollTotal = int(numEnroll) if pd.notna(numEnroll) else 0
+
         emplid_raw = data.get("Instructor Emplid", None)
         self.instructorEmplid = int(float(emplid_raw)) if pd.notna(emplid_raw) else None
 
@@ -135,7 +139,8 @@ class Course:
         section = self.rawData.get("Section")
         categoryNbr = self.rawData.get("Cat Nbr")
         classNbr = self.rawData.get("Class Nbr")
-        return (term, subject, categoryNbr, section, classNbr) + self._meeting_signature()
+        classCat = self.rawData.get("Class")
+        return (term, subject, categoryNbr, section, classNbr, classCat) + self._meeting_signature()
 
     def getGroupKeyForCollapsing(self):
         term = self.rawData.get("Term")
@@ -155,7 +160,8 @@ class Course:
             return float(p.get("laboratoryRate", 5.0))
         if any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
             return float(p.get("supplementalInstructionRate", 1.0))
-
+        if any(k in self.catNbr for k in ("699", "799")):
+            return 1.0
         return float(p.get("lectureRate", 3.33))
 
     def _adjustForEnrollment(self, base):
@@ -176,7 +182,11 @@ class Course:
 
     # ------------------------------------------------------------------
     def calculateLoad(self):
-        if self.enrollTotal == 0:
+        if self.enrollTotal == 0 or self.enrollTotal is None:
+            self.load = 0.0
+            return 0.0
+        
+        if self.maxUnits == 0 or self.maxUnits is None:
             self.load = 0.0
             return 0.0
         
@@ -193,6 +203,9 @@ class Course:
 
         elif any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
             load = base
+        
+        elif any(k in self.catNbr for k in ("699", "799")):
+            load = min(base * eff_enroll, 5.0)
 
         else:
             rate = self._adjustForEnrollment(base)
@@ -264,14 +277,14 @@ def adjust_co_convened(courses: Iterable[Course]) -> None:
         for c in same:
             me = f"{c.rawData.get('Subject','').strip()} {c.catNbr}-{c.rawData.get('Section','').strip()}"
             c.co_convened_members = [other for other in ids if other != me]
-
+        
+        rep, *others = sorted(same, key=lambda c: c.maxUnits, reverse=True)
         combined = sum(c.enrollTotal for c in same)
-        rep = same[0] 
         rep.enrollTotal = combined
+        rep.load = None
         rep.load = rep.calculateLoad()
-        for extra in same[1:]: 
-            extra.enrollTotal = 0
-            extra.maxUnits = 0
+
+        for extra in others:
             extra.load = 0
 
 
@@ -368,9 +381,6 @@ def main():
                     'Units Taught': ', '.join(units),
                     'Courses Taught': '; '.join(course_list)
                 })
-
-            for index in summary_rows:
-                print(index)
 
 if __name__ == "__main__":
     main()
