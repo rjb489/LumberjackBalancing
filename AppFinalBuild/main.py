@@ -213,14 +213,15 @@ class ExcelParserApp(QWidget):
                 background-color: #FFC72C;
                 color: black;
                 padding: 10px;
-                border-radius: 5px;
+               border-radius: 5px;
             }
             QPushButton:hover {
                 background-color: #E6B800;
             }
-        """)
+       """)
         self.settings_button.clicked.connect(self.open_settings)
-        layout.addWidget(self.settings_button)
+        self.settings_button.hide() 
+
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setValue(0)
