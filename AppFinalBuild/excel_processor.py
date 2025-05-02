@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import openpyxl
@@ -89,6 +90,8 @@ class ExcelProcessor(QThread):
             # 4) Team‑taught division
             for lst in courseGroups.values():
                 valid = [c for c in lst if all(c._meeting_signature())]
+                valid = [c for c in valid if not any(t in c.catNbr for t in ("699", "799"))]
+                valid = [c for c in valid if any(k in c.courseCategory for k in ("lecture", "laboratory"))]
                 pi_only = [c for c in valid if c.instructorRole.upper()=="PI"]
                 unique_emplids = {c.instructorEmplid for c in pi_only}
                 if len(unique_emplids) >= 2:
@@ -111,11 +114,17 @@ class ExcelProcessor(QThread):
 
                 course_list = []
                 for c in fac.courses.values():
+
+                    groupFlag = (
+                        bool(getattr(c, "co_convened_members", None))
+                        or bool(getattr(c, "team_taught_members", None))
+                    )
+
                     # base label
                     subject = c.rawData.get('Subject','').strip()
                     section = c.rawData.get('Section','').strip()
                     desc    = c.rawData.get('Class Description','').strip().title()
-                    label   = f"{subject} {c.catNbr}-{section} – {desc}"
+                    label = f"{'*' if groupFlag else ''}{subject} {c.catNbr}-{section} – {desc}"
 
                     # tag on any partner info
                     if getattr(c, 'co_convened_members', None):
@@ -138,19 +147,22 @@ class ExcelProcessor(QThread):
             summary_df = pd.DataFrame(summary_rows)
 
             # 7) Write output
-            out_file = self.raw_file_path.replace('.xlsx', '_summary.xlsx')
+            data_dir = os.path.dirname(self.raw_file_path)
+            base = os.path.splitext(os.path.basename(self.raw_file_path))[0]
+
+            out_file = os.path.join(data_dir, f"{base}_summary.xlsx")
             with pd.ExcelWriter(out_file, engine='openpyxl') as writer:
                 raw_df.to_excel(writer, sheet_name='Processed Raw Data', index=False)
                 summary_df.to_excel(writer, sheet_name='Faculty Summary', index=False)
             
-            export_faculty_by_unit(faculty, outputFile="faculty_by_unit.xlsx")
+            export_faculty_by_unit(faculty, outputFile=os.path.join(data_dir, "faculty_by_unit.xlsx"))
 
             # Simulate progress
             pct = 0
             while pct < 100:
-                pct = min(pct + random.randint(5, 10), 100)
+                pct = min(pct + random.randint(20, 35), 100)
                 self.progress.emit(pct)
-                time.sleep(0.03)
+                time.sleep(0.008)
 
             self.completed.emit(out_file)
 
@@ -180,10 +192,21 @@ def add_glossary_sheet(wb, instructors: dict[int, FacultyMember]):
 
         # each course under that professor
         for course in prof.courses.values():
+
+            groupFlag = (
+                bool(getattr(course, "co_convened_members", None))
+                or bool(getattr(course, "team_taught_members", None))
+            )
+
             subj   = course.rawData.get("Subject", "").strip()
             cat    = course.rawData.get("Cat Nbr", "").strip()
             sect   = course.rawData.get("Section", "").strip()
-            label  = f"{subj} {cat}-{sect}" if subj else course.classDescription.title()
+            label = f"{'*' if groupFlag else ''}{subj} {cat}-{sect}"
+
+            if getattr(course, "co_convened_members", None):
+                label += f" (co-convened with {', '.join(course.co_convened_members)})"
+            if getattr(course, "team_taught_members", None):
+                label += f" (team-taught with {', '.join(course.team_taught_members)})"
 
             if course.load is None:
                 course.calculateLoad()

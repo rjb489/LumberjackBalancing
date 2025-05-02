@@ -28,6 +28,7 @@ def _meeting_signature(row_or_course) -> Tuple:
 
 def loadWorkloadPolicy(path: str | None = None) -> dict:
     defaults = {
+        "699 and 799 Rate": 1.0,
         "supplementalInstructionRate": 1.0,
         "specialCoursesRate": 0.005,
         "independentStudyRateHigh": 0.5,
@@ -128,6 +129,8 @@ class Course:
 
         self.co_convened_members: List[str] = []
         self.team_taught_members: List[str] = []
+        self.isCoconvened: bool = False
+        self.isTeamTaught: bool = False
 
     # ------------------------------------------------------------------
     def _meeting_signature(self):
@@ -151,6 +154,11 @@ class Course:
     # ------------------------------------------------------------------
     def _baseRate(self):
         p = self.policy
+        if any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
+            return float(p.get("supplementalInstructionRate", 1.0))
+        if any(k in self.catNbr for k in ("699", "799")):
+            return float(p.get("699 and 799 Rate", 1.0))
+
         if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork", "research - experiential", "individualized study - experie")):
             if self.maxUnits > 0 and self.maxUnits <= 2:
                 return float(p.get("independentStudyRateLow", 0.25))
@@ -158,10 +166,7 @@ class Course:
                 return float(p.get("independentStudyRateHigh", 0.5))
         if "laboratory" in self.courseCategory:
             return float(p.get("laboratoryRate", 5.0))
-        if any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
-            return float(p.get("supplementalInstructionRate", 1.0))
-        if any(k in self.catNbr for k in ("699", "799")):
-            return 1.0
+        
         return float(p.get("lectureRate", 3.33))
 
     def _adjustForEnrollment(self, base):
@@ -195,17 +200,17 @@ class Course:
         
         base = self._baseRate()
         eff_enroll = self.enrollTotal
-
-        if any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
-            load = base * eff_enroll
-            cap = self.policy.get("maxLoadCap", 5.0)
-            load = min(load, cap)
-
-        elif any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
+        
+        if any(k in self.classCat for k in ("mat 100", "mat 108", "mat 114", "mat 125")) and self.instructorRole == "st":
             load = base
         
         elif any(k in self.catNbr for k in ("699", "799")):
             load = min(base * eff_enroll, 5.0)
+
+        elif any(k in self.courseCategory for k in ("independent study", "research", "fieldwork")):
+            load = base * eff_enroll
+            cap = self.policy.get("maxLoadCap", 5.0)
+            load = min(load, cap)
 
         else:
             rate = self._adjustForEnrollment(base)
@@ -224,7 +229,8 @@ class Course:
             return self.load
         if self.load is None:
             self.load = self.calculateLoad()
-        self.load /= d 
+        self.load /= d
+        self.isteamTaught = True 
         return self.load
 
 # ---------------------------------------------------------------------------
@@ -256,6 +262,9 @@ class FacultyMember:
 def adjust_co_convened(courses: Iterable[Course]) -> None:
     bundles: Dict[Tuple, List[Course]] = defaultdict(list)
     for c in courses:
+        if not any(t in c.courseCategory for t in ("lecture", "laboratory")) or any(t in c.catNbr for t in ("699", "799")):
+            continue
+
         if c.instructorEmplid is None:
             continue
         
@@ -283,9 +292,11 @@ def adjust_co_convened(courses: Iterable[Course]) -> None:
         rep.enrollTotal = combined
         rep.load = None
         rep.load = rep.calculateLoad()
+        rep.isCoconvened = True
 
         for extra in others:
             extra.load = 0
+            extra.isCoconvened = True
 
 
 ################################################################################
